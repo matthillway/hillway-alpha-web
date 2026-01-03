@@ -1,46 +1,46 @@
-import { Star, Quote } from 'lucide-react';
+import { Star, Quote } from "lucide-react";
 
 const testimonials = [
   {
-    name: 'James M.',
-    role: 'Sports Bettor',
-    location: 'London, UK',
-    avatar: 'JM',
+    name: "James M.",
+    role: "Sports Bettor",
+    location: "London, UK",
+    avatar: "JM",
     content:
-      'The arbitrage scanner has been a game-changer. I was skeptical at first, but the profits are real and consistent. Made back my annual subscription in the first week.',
+      "The arbitrage scanner has been a game-changer. I was skeptical at first, but the profits are real and consistent. Made back my annual subscription in the first week.",
     rating: 5,
-    profit: '+2,340',
-    period: 'First month',
+    profit: "+2,340",
+    period: "First month",
   },
   {
-    name: 'Sarah K.',
-    role: 'Crypto Trader',
-    location: 'Manchester, UK',
-    avatar: 'SK',
+    name: "Sarah K.",
+    role: "Crypto Trader",
+    location: "Manchester, UK",
+    avatar: "SK",
     content:
-      'The funding rate alerts are incredibly timely. I have set up a simple strategy and now earn passive income while I sleep. The AI briefings save me hours of research.',
+      "The funding rate alerts are incredibly timely. I have set up a simple strategy and now earn passive income while I sleep. The AI briefings save me hours of research.",
     rating: 5,
-    profit: '+890',
-    period: 'Per week avg',
+    profit: "+890",
+    period: "Per week avg",
   },
   {
-    name: 'David P.',
-    role: 'Retail Investor',
-    location: 'Edinburgh, UK',
-    avatar: 'DP',
+    name: "David P.",
+    role: "Retail Investor",
+    location: "Edinburgh, UK",
+    avatar: "DP",
     content:
-      'Finally a tool that gives retail investors an edge. The stock momentum alerts have helped me catch several breakouts early. The fear & greed signals are spot on.',
+      "Finally a tool that gives retail investors an edge. The stock momentum alerts have helped me catch several breakouts early. The fear & greed signals are spot on.",
     rating: 5,
-    profit: '+15%',
-    period: 'Portfolio growth',
+    profit: "+15%",
+    period: "Portfolio growth",
   },
 ];
 
 const stats = [
-  { value: '10,000+', label: 'Opportunities Found' },
-  { value: '2,500+', label: 'Active Users' },
-  { value: '97%', label: 'Alert Accuracy' },
-  { value: '4.9/5', label: 'User Rating' },
+  { value: "10,000+", label: "Opportunities Found" },
+  { value: "2,500+", label: "Active Users" },
+  { value: "97%", label: "Alert Accuracy" },
+  { value: "4.9/5", label: "User Rating" },
 ];
 
 export function SocialProof() {
@@ -66,13 +66,14 @@ export function SocialProof() {
         {/* Section header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-            Trusted by{' '}
+            Trusted by{" "}
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               Smart Traders
             </span>
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Join thousands of traders who use Hillway Alpha to find profitable opportunities every day.
+            Join thousands of traders who use TradeSmartHub to find profitable
+            opportunities every day.
           </p>
         </div>
 
@@ -89,7 +90,10 @@ export function SocialProof() {
               {/* Rating */}
               <div className="flex gap-1 mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                  <Star
+                    key={i}
+                    className="w-5 h-5 text-yellow-400 fill-yellow-400"
+                  />
                 ))}
               </div>
 
@@ -100,8 +104,12 @@ export function SocialProof() {
 
               {/* Profit badge */}
               <div className="inline-flex items-center px-3 py-1 rounded-full bg-green-500/20 border border-green-500/30 mb-6">
-                <span className="text-green-400 font-semibold">{testimonial.profit}</span>
-                <span className="text-gray-400 text-sm ml-2">{testimonial.period}</span>
+                <span className="text-green-400 font-semibold">
+                  {testimonial.profit}
+                </span>
+                <span className="text-gray-400 text-sm ml-2">
+                  {testimonial.period}
+                </span>
               </div>
 
               {/* Author */}
@@ -110,7 +118,9 @@ export function SocialProof() {
                   {testimonial.avatar}
                 </div>
                 <div>
-                  <div className="text-white font-medium">{testimonial.name}</div>
+                  <div className="text-white font-medium">
+                    {testimonial.name}
+                  </div>
                   <div className="text-gray-500 text-sm">
                     {testimonial.role} - {testimonial.location}
                   </div>

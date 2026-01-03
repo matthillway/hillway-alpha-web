@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, Shield, Clock, Zap } from 'lucide-react';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Shield, Clock, Zap } from "lucide-react";
 
 const benefits = [
-  { icon: Shield, text: '7-day free trial' },
-  { icon: Clock, text: 'Cancel anytime' },
-  { icon: Zap, text: 'Instant access' },
+  { icon: Shield, text: "7-day free trial" },
+  { icon: Clock, text: "Cancel anytime" },
+  { icon: Zap, text: "Instant access" },
 ];
 
 export function CTA() {
@@ -24,14 +24,15 @@ export function CTA() {
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Main content */}
         <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-          Ready to Find{' '}
+          Ready to Find{" "}
           <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
             Your Edge?
           </span>
         </h2>
         <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
-          Join thousands of traders who use Hillway Alpha to discover profitable opportunities
-          across betting, stocks, and crypto markets. Start your free trial today.
+          Join thousands of traders who use TradeSmartHub to discover profitable
+          opportunities across betting, stocks, and crypto markets. Start your
+          free trial today.
         </p>
 
         {/* CTA buttons */}
@@ -61,9 +62,10 @@ export function CTA() {
 
         {/* Risk disclaimer */}
         <p className="mt-12 text-sm text-gray-500 max-w-2xl mx-auto">
-          Trading involves risk. Past performance is not indicative of future results.
-          Hillway Alpha provides information and tools, not financial advice.
-          Always do your own research before making investment decisions.
+          Trading involves risk. Past performance is not indicative of future
+          results. TradeSmartHub provides information and tools, not financial
+          advice. Always do your own research before making investment
+          decisions.
         </p>
       </div>
     </section>

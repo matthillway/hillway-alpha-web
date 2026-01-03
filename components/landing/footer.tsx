@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import { TrendingUp, Twitter, Github, Linkedin } from 'lucide-react';
+import Link from "next/link";
+import { TrendingUp, Twitter, Github, Linkedin } from "lucide-react";
 
 export function Footer() {
   return (
@@ -12,20 +12,31 @@ export function Footer() {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">Hillway Alpha</span>
+              <span className="text-xl font-bold text-white">
+                TradeSmartHub
+              </span>
             </Link>
             <p className="text-gray-400 max-w-md">
-              AI-powered multi-asset opportunity scanner. Find profitable opportunities
-              across betting, stocks, and crypto markets.
+              AI-powered multi-asset opportunity scanner. Find profitable
+              opportunities across betting, stocks, and crypto markets.
             </p>
             <div className="flex space-x-4 mt-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
                 <Twitter className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
                 <Github className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
                 <Linkedin className="w-5 h-5" />
               </a>
             </div>
@@ -36,22 +47,34 @@ export function Footer() {
             <h3 className="text-white font-semibold mb-4">Product</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/#features" className="text-gray-400 hover:text-white transition-colors">
+                <Link
+                  href="/#features"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   Features
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="text-gray-400 hover:text-white transition-colors">
+                <Link
+                  href="/pricing"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link href="/#how-it-works" className="text-gray-400 hover:text-white transition-colors">
+                <Link
+                  href="/#how-it-works"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   How it Works
                 </Link>
               </li>
               <li>
-                <Link href="/auth/signup" className="text-gray-400 hover:text-white transition-colors">
+                <Link
+                  href="/auth/signup"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   Get Started
                 </Link>
               </li>
@@ -63,17 +86,26 @@ export function Footer() {
             <h3 className="text-white font-semibold mb-4">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">
+                <Link
+                  href="/privacy"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">
+                <Link
+                  href="/terms"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/disclaimer" className="text-gray-400 hover:text-white transition-colors">
+                <Link
+                  href="/disclaimer"
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
                   Risk Disclaimer
                 </Link>
               </li>
@@ -83,11 +115,10 @@ export function Footer() {
 
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} Hillway Property Consultants Ltd. All rights reserved.
+            &copy; {new Date().getFullYear()} TradeSmartHub. All rights
+            reserved.
           </p>
-          <p className="text-gray-500 text-sm mt-2 md:mt-0">
-            Built with AI by Hillway.ai
-          </p>
+          <p className="text-gray-500 text-sm mt-2 md:mt-0">Powered by AI</p>
         </div>
       </div>
     </footer>

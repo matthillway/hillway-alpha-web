@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useState } from 'react';
-import { Menu, X, TrendingUp } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import Link from "next/link";
+import { useState } from "react";
+import { Menu, X, TrendingUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -17,18 +17,27 @@ export function Header() {
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-white">Hillway Alpha</span>
+            <span className="text-xl font-bold text-white">TradeSmartHub</span>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/#features" className="text-gray-400 hover:text-white transition-colors">
+            <Link
+              href="/#features"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
               Features
             </Link>
-            <Link href="/pricing" className="text-gray-400 hover:text-white transition-colors">
+            <Link
+              href="/pricing"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
               Pricing
             </Link>
-            <Link href="/#how-it-works" className="text-gray-400 hover:text-white transition-colors">
+            <Link
+              href="/#how-it-works"
+              className="text-gray-400 hover:text-white transition-colors"
+            >
               How it Works
             </Link>
           </nav>
@@ -48,7 +57,11 @@ export function Header() {
             className="md:hidden text-gray-400 hover:text-white"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
           </button>
         </div>
       </div>
@@ -80,10 +93,14 @@ export function Header() {
             </Link>
             <div className="pt-4 border-t border-gray-800 space-y-2">
               <Link href="/auth/login" className="block">
-                <Button variant="outline" className="w-full">Log in</Button>
+                <Button variant="outline" className="w-full">
+                  Log in
+                </Button>
               </Link>
               <Link href="/auth/signup" className="block">
-                <Button variant="primary" className="w-full">Start Free Trial</Button>
+                <Button variant="primary" className="w-full">
+                  Start Free Trial
+                </Button>
               </Link>
             </div>
           </div>

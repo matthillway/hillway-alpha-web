@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 import {
   Mail,
   Lock,
@@ -11,51 +11,51 @@ import {
   EyeOff,
   Loader2,
   AlertCircle,
-  Zap
-} from 'lucide-react';
+  Zap,
+} from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
-      setEmailError('Email is required');
+      setEmailError("Email is required");
       return false;
     }
     if (!emailRegex.test(email)) {
-      setEmailError('Please enter a valid email address');
+      setEmailError("Please enter a valid email address");
       return false;
     }
-    setEmailError('');
+    setEmailError("");
     return true;
   };
 
   const validatePassword = (): boolean => {
     if (!password) {
-      setPasswordError('Password is required');
+      setPasswordError("Password is required");
       return false;
     }
     if (password.length < 8) {
-      setPasswordError('Password must be at least 8 characters');
+      setPasswordError("Password must be at least 8 characters");
       return false;
     }
-    setPasswordError('');
+    setPasswordError("");
     return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     const isEmailValid = validateEmail(email);
     const isPasswordValid = validatePassword();
@@ -67,14 +67,15 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data, error: signInError } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
       if (signInError) {
-        if (signInError.message.includes('Invalid login credentials')) {
-          setError('Invalid email or password. Please try again.');
+        if (signInError.message.includes("Invalid login credentials")) {
+          setError("Invalid email or password. Please try again.");
         } else {
           setError(signInError.message);
         }
@@ -82,17 +83,17 @@ export default function LoginPage() {
       }
 
       if (data.user) {
-        router.push('/dashboard');
+        router.push("/dashboard");
       }
     } catch {
-      setError('An unexpected error occurred. Please try again.');
+      setError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSocialLogin = async (provider: 'google' | 'github') => {
-    setError('');
+  const handleSocialLogin = async (provider: "google" | "github") => {
+    setError("");
     setIsLoading(true);
 
     try {
@@ -107,7 +108,7 @@ export default function LoginPage() {
         setError(oauthError.message);
       }
     } catch {
-      setError('An unexpected error occurred. Please try again.');
+      setError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -115,7 +116,7 @@ export default function LoginPage() {
 
   const handleForgotPassword = async () => {
     if (!email) {
-      setEmailError('Enter your email to reset password');
+      setEmailError("Enter your email to reset password");
       return;
     }
 
@@ -124,21 +125,24 @@ export default function LoginPage() {
     }
 
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
-      });
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+        email,
+        {
+          redirectTo: `${window.location.origin}/auth/reset-password`,
+        },
+      );
 
       if (resetError) {
         setError(resetError.message);
       } else {
-        setError('');
-        alert('Password reset email sent! Check your inbox.');
+        setError("");
+        alert("Password reset email sent! Check your inbox.");
       }
     } catch {
-      setError('An unexpected error occurred. Please try again.');
+      setError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -157,7 +161,7 @@ export default function LoginPage() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
               <Zap className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold text-white">Hillway Alpha</span>
+            <span className="text-2xl font-bold text-white">TradeSmartHub</span>
           </Link>
         </div>
 
@@ -165,14 +169,16 @@ export default function LoginPage() {
         <div className="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800 rounded-2xl p-8 shadow-2xl">
           <div className="text-center mb-6">
             <h1 className="text-2xl font-bold text-white mb-2">Welcome back</h1>
-            <p className="text-zinc-400 text-sm">Sign in to your account to continue</p>
+            <p className="text-zinc-400 text-sm">
+              Sign in to your account to continue
+            </p>
           </div>
 
           {/* Social Login Buttons */}
           <div className="grid grid-cols-2 gap-3 mb-6">
             <button
               type="button"
-              onClick={() => handleSocialLogin('google')}
+              onClick={() => handleSocialLogin("google")}
               disabled={isLoading}
               className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -199,7 +205,7 @@ export default function LoginPage() {
 
             <button
               type="button"
-              onClick={() => handleSocialLogin('github')}
+              onClick={() => handleSocialLogin("github")}
               disabled={isLoading}
               className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -221,7 +227,9 @@ export default function LoginPage() {
               <div className="w-full border-t border-zinc-700" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-zinc-900/50 text-zinc-500">or continue with email</span>
+              <span className="px-4 bg-zinc-900/50 text-zinc-500">
+                or continue with email
+              </span>
             </div>
           </div>
 
@@ -237,7 +245,10 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-zinc-300 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-zinc-300 mb-2"
+              >
                 Email address
               </label>
               <div className="relative">
@@ -253,7 +264,7 @@ export default function LoginPage() {
                   onBlur={() => email && validateEmail(email)}
                   placeholder="you@example.com"
                   className={`w-full pl-10 pr-4 py-3 rounded-xl bg-zinc-800/50 border ${
-                    emailError ? 'border-red-500' : 'border-zinc-700'
+                    emailError ? "border-red-500" : "border-zinc-700"
                   } text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200`}
                 />
               </div>
@@ -265,7 +276,10 @@ export default function LoginPage() {
             {/* Password Field */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label htmlFor="password" className="block text-sm font-medium text-zinc-300">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-zinc-300"
+                >
                   Password
                 </label>
                 <button
@@ -280,15 +294,15 @@ export default function LoginPage() {
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
                 <input
                   id="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
-                    if (passwordError) setPasswordError('');
+                    if (passwordError) setPasswordError("");
                   }}
                   placeholder="Enter your password"
                   className={`w-full pl-10 pr-12 py-3 rounded-xl bg-zinc-800/50 border ${
-                    passwordError ? 'border-red-500' : 'border-zinc-700'
+                    passwordError ? "border-red-500" : "border-zinc-700"
                   } text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200`}
                 />
                 <button
@@ -296,7 +310,11 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
                 </button>
               </div>
               {passwordError && (
@@ -313,7 +331,10 @@ export default function LoginPage() {
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="w-4 h-4 rounded border-zinc-700 bg-zinc-800 text-purple-500 focus:ring-purple-500 focus:ring-offset-0 cursor-pointer"
               />
-              <label htmlFor="remember-me" className="ml-2 text-sm text-zinc-400 cursor-pointer">
+              <label
+                htmlFor="remember-me"
+                className="ml-2 text-sm text-zinc-400 cursor-pointer"
+              >
                 Remember me for 30 days
               </label>
             </div>
@@ -330,14 +351,14 @@ export default function LoginPage() {
                   Signing in...
                 </>
               ) : (
-                'Sign in'
+                "Sign in"
               )}
             </button>
           </form>
 
           {/* Sign Up Link */}
           <p className="mt-6 text-center text-sm text-zinc-400">
-            Don&apos;t have an account?{' '}
+            Don&apos;t have an account?{" "}
             <Link
               href="/auth/signup"
               className="text-purple-400 hover:text-purple-300 font-medium transition-colors"
@@ -349,7 +370,12 @@ export default function LoginPage() {
 
         {/* Security Badge */}
         <div className="mt-6 flex items-center justify-center gap-2 text-zinc-500 text-xs">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
