@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import DashboardPage from "@/app/dashboard/page";
 
 // Mock fetch globally
@@ -31,9 +31,15 @@ describe("DashboardPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockFetch.mockReset();
+    // Default mock for fetch to prevent unhandled rejection
+    mockFetch.mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ opportunities: [], total: 0 }),
+    });
   });
 
   afterEach(() => {
+    cleanup();
     vi.restoreAllMocks();
   });
 
@@ -47,16 +53,27 @@ describe("DashboardPage", () => {
     });
   });
 
-  it("shows loading spinner initially", () => {
-    mockGetSession.mockImplementation(
-      () => new Promise(() => {}), // Never resolves - keeps loading
-    );
+  it("shows loading spinner initially", async () => {
+    // Create a promise that we control - resolves after assertion
+    let resolveSession: (value: unknown) => void = () => {};
+    const sessionPromise = new Promise((resolve) => {
+      resolveSession = resolve;
+    });
+    mockGetSession.mockReturnValue(sessionPromise);
 
     render(<DashboardPage />);
 
     // Check for spinner (the loading div with animate-spin class)
     const spinner = document.querySelector(".animate-spin");
     expect(spinner).toBeInTheDocument();
+
+    // Resolve the promise to avoid unhandled rejection
+    resolveSession({ data: { session: null } });
+
+    // Wait for cleanup
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith("/auth/login");
+    });
   });
 
   it("renders dashboard header when authenticated", async () => {
