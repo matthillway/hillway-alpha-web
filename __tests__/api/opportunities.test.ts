@@ -1,17 +1,44 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
+// Create a chainable mock that returns itself for all methods
+function createChainableMock(resolvedValue: {
+  data: unknown;
+  error: unknown;
+  count: number | null;
+}) {
+  const chainable: Record<string, unknown> = {};
+  const methods = [
+    "select",
+    "order",
+    "range",
+    "eq",
+    "or",
+    "gte",
+    "lte",
+    "lt",
+    "gt",
+  ];
+
+  // Make it thenable (awaitable)
+  chainable.then = (resolve: (value: unknown) => void) => {
+    resolve(resolvedValue);
+    return chainable;
+  };
+
+  // Add all chainable methods
+  methods.forEach((method) => {
+    chainable[method] = vi.fn(() => chainable);
+  });
+
+  return chainable;
+}
+
 // Mock Supabase before importing the route
-const mockQuery = vi.fn();
+let mockResolvedValue = { data: [], error: null, count: 0 };
 vi.mock("@supabase/supabase-js", () => ({
   createClient: vi.fn(() => ({
-    from: vi.fn(() => ({
-      select: vi.fn(() => ({
-        order: vi.fn(() => ({
-          range: vi.fn(() => mockQuery),
-        })),
-      })),
-    })),
+    from: vi.fn(() => createChainableMock(mockResolvedValue)),
   })),
 }));
 
@@ -21,6 +48,7 @@ import { GET } from "@/app/api/opportunities/route";
 describe("GET /api/opportunities", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockResolvedValue = { data: [], error: null, count: 0 };
   });
 
   it("returns opportunities list with pagination", async () => {
@@ -49,11 +77,11 @@ describe("GET /api/opportunities", () => {
       },
     ];
 
-    mockQuery.mockResolvedValue({
+    mockResolvedValue = {
       data: mockOpportunities,
       error: null,
       count: 2,
-    });
+    };
 
     const request = new NextRequest("http://localhost/api/opportunities");
     const response = await GET(request);
@@ -68,11 +96,11 @@ describe("GET /api/opportunities", () => {
   });
 
   it("applies category filter correctly", async () => {
-    mockQuery.mockResolvedValue({
+    mockResolvedValue = {
       data: [{ id: "1", category: "arbitrage" }],
       error: null,
       count: 1,
-    });
+    };
 
     const request = new NextRequest(
       "http://localhost/api/opportunities?category=arbitrage",
@@ -85,11 +113,11 @@ describe("GET /api/opportunities", () => {
   });
 
   it("applies status filter correctly", async () => {
-    mockQuery.mockResolvedValue({
+    mockResolvedValue = {
       data: [{ id: "1", status: "closed" }],
       error: null,
       count: 1,
-    });
+    };
 
     const request = new NextRequest(
       "http://localhost/api/opportunities?status=closed",
@@ -102,11 +130,11 @@ describe("GET /api/opportunities", () => {
   });
 
   it("handles pagination parameters", async () => {
-    mockQuery.mockResolvedValue({
+    mockResolvedValue = {
       data: [],
       error: null,
       count: 100,
-    });
+    };
 
     const request = new NextRequest(
       "http://localhost/api/opportunities?limit=10&offset=20",
@@ -120,11 +148,11 @@ describe("GET /api/opportunities", () => {
   });
 
   it("returns empty array when no opportunities found", async () => {
-    mockQuery.mockResolvedValue({
+    mockResolvedValue = {
       data: [],
       error: null,
       count: 0,
-    });
+    };
 
     const request = new NextRequest("http://localhost/api/opportunities");
     const response = await GET(request);
@@ -136,11 +164,11 @@ describe("GET /api/opportunities", () => {
   });
 
   it("returns 500 on database error", async () => {
-    mockQuery.mockResolvedValue({
+    mockResolvedValue = {
       data: null,
       error: { message: "Database error" },
       count: null,
-    });
+    };
 
     const request = new NextRequest("http://localhost/api/opportunities");
     const response = await GET(request);
