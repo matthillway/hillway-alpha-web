@@ -5,91 +5,55 @@ const features = [
     icon: Target,
     title: "Betting Arbitrage",
     description:
-      "Guaranteed profit from odds discrepancies across bookmakers. Our scanner monitors hundreds of markets in real-time to find risk-free arbitrage opportunities.",
-    gradient: "from-green-500 to-emerald-600",
-    stat: "2-5%",
-    statLabel: "Typical profit per arb",
+      "Guaranteed profit from odds discrepancies. Monitor hundreds of markets in real-time for risk-free opportunities.",
   },
   {
     icon: TrendingUp,
     title: "Stock Momentum",
     description:
-      "Technical analysis on FTSE 100 & S&P 500 stocks. Identify breakout patterns, RSI signals, and volume anomalies before the crowd.",
-    gradient: "from-blue-500 to-cyan-600",
-    stat: "500+",
-    statLabel: "Stocks monitored",
+      "Technical analysis on 500+ stocks. Identify breakouts, RSI signals, and volume anomalies before the crowd.",
   },
   {
     icon: Bitcoin,
-    title: "Crypto Funding Rates",
+    title: "Crypto Signals",
     description:
-      "Spot profitable funding rate opportunities on Binance perpetual futures. Earn passive income from funding rate arbitrage strategies.",
-    gradient: "from-orange-500 to-yellow-600",
-    stat: "0.1%+",
-    statLabel: "Per 8-hour funding",
+      "Funding rate opportunities and sentiment analysis. Earn from market inefficiencies across exchanges.",
   },
 ];
 
 export function Features() {
   return (
-    <section id="features" className="py-24 bg-gray-950 relative">
-      {/* Background accents */}
-      <div className="absolute top-0 left-1/4 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-purple-600/10 rounded-full blur-3xl" />
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="features" className="py-24 md:py-32">
+      <div className="max-w-6xl mx-auto px-6">
         {/* Section header */}
-        <div className="text-center mb-20">
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
-            Three Markets.{" "}
-            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Maximum Edge.
-            </span>
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-4">
+            Three markets. One platform.
           </h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            AI-powered scanners monitoring betting, stocks, and crypto 24/7 to
-            surface profitable opportunities.
+          <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+            AI-powered scanners monitoring betting, stocks, and crypto 24/7.
           </p>
         </div>
 
         {/* Features grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group relative p-10 rounded-2xl bg-gray-900/50 border border-gray-800 hover:border-gray-700 transition-all duration-300 hover:transform hover:scale-[1.02]"
+              className="p-8 rounded-2xl bg-slate-900/50 border border-slate-800/50 hover:border-slate-700/50 transition-colors"
             >
               {/* Icon */}
-              <div
-                className={`w-14 h-14 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-6 group-hover:shadow-lg group-hover:shadow-${feature.gradient.split(" ")[0].replace("from-", "")}/20 transition-shadow`}
-              >
-                <feature.icon className="w-7 h-7 text-white" />
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-6">
+                <feature.icon className="w-6 h-6 text-emerald-400" />
               </div>
 
               {/* Content */}
-              <h3 className="text-xl font-semibold text-white mb-3">
+              <h3 className="text-lg font-semibold text-white mb-3">
                 {feature.title}
               </h3>
-              <p className="text-gray-400 mb-6 leading-relaxed">
+              <p className="text-slate-400 leading-relaxed">
                 {feature.description}
               </p>
-
-              {/* Stat */}
-              <div className="flex items-baseline gap-2">
-                <span
-                  className={`text-2xl font-bold bg-gradient-to-r ${feature.gradient} bg-clip-text text-transparent`}
-                >
-                  {feature.stat}
-                </span>
-                <span className="text-sm text-gray-500">
-                  {feature.statLabel}
-                </span>
-              </div>
-
-              {/* Hover glow effect */}
-              <div
-                className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 transition-opacity`}
-              />
             </div>
           ))}
         </div>
