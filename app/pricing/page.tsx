@@ -23,7 +23,7 @@ const tiers = [
   {
     name: "Free",
     price: "0",
-    description: "Try TradeSmartHub with sample data",
+    description: "Try TradeSmart with sample data",
     icon: Gift,
     features: [
       { text: "Demo mode only", included: true },
@@ -103,44 +103,24 @@ const tiers = [
 
 const faqs = [
   {
-    question: "What is TradeSmartHub?",
-    answer:
-      "TradeSmartHub is an AI-powered market intelligence platform that scans for profitable opportunities across betting arbitrage, stock momentum, and crypto funding rates. Our algorithms identify edges that most traders miss.",
-  },
-  {
     question: "How does the free trial work?",
     answer:
-      "Start with our Free tier to explore the platform with sample data. When you're ready, upgrade to Pro for a 14-day free trial with full access to all Pro features. No credit card required to start.",
+      "Start with our Free tier to explore with sample data. Upgrade to Pro for a 14-day free trial with full access. No credit card required.",
   },
   {
-    question: "What sports leagues are included in Starter?",
+    question: "What's included in each plan?",
     answer:
-      "The Starter plan includes Premier League, La Liga, and Serie A. Upgrade to Pro to unlock all major sports leagues worldwide including NFL, NBA, MLB, NHL, and more.",
-  },
-  {
-    question: "How do WhatsApp alerts work?",
-    answer:
-      "Pro and Enterprise users receive instant alerts via WhatsApp when high-value opportunities are detected. You'll get notified within seconds of discovery, giving you maximum time to act.",
-  },
-  {
-    question: "What are AI-powered insights?",
-    answer:
-      "Our AI analyzes patterns across markets to predict upcoming opportunities, explain why certain arbitrage situations exist, and provide confidence scores for each alert. Available on Pro and Enterprise plans.",
+      "Free: Demo mode with sample data. Starter: Betting arbitrage for 3 leagues. Pro: All scanners (betting, stocks, crypto) plus WhatsApp alerts. Enterprise: Unlimited access with API.",
   },
   {
     question: "Can I cancel anytime?",
     answer:
-      "Yes, all plans are month-to-month with no long-term commitment. Cancel anytime from your dashboard. If you cancel, you'll retain access until the end of your billing period.",
-  },
-  {
-    question: "What's included in API access?",
-    answer:
-      "Enterprise API access lets you integrate TradeSmartHub data directly into your trading systems, spreadsheets, or custom applications. Full REST API documentation and support included.",
+      "Yes, all plans are month-to-month with no commitment. Cancel anytime from your dashboard and retain access until the end of your billing period.",
   },
   {
     question: "Do you offer annual billing?",
     answer:
-      "Yes! Contact us for annual billing options and receive 2 months free. Enterprise customers also benefit from custom pricing for larger teams.",
+      "Yes! Contact us for annual billing and receive 2 months free. Enterprise customers also benefit from custom pricing.",
   },
 ];
 
@@ -177,7 +157,7 @@ export default function PricingPage() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500">
               <TrendingUp className="h-5 w-5 text-black" />
             </div>
-            <span className="text-xl font-bold text-white">TradeSmartHub</span>
+            <span className="text-xl font-bold text-white">TradeSmart</span>
           </Link>
           <div className="flex items-center gap-4">
             <Link
@@ -391,7 +371,7 @@ export default function PricingPage() {
                 API Access
               </h3>
               <p className="text-zinc-400 text-sm">
-                Integrate TradeSmartHub data into your own trading systems,
+                Integrate TradeSmart data into your own trading systems,
                 spreadsheets, or custom applications. Full REST API. Enterprise
                 only.
               </p>
@@ -407,8 +387,7 @@ export default function PricingPage() {
             Frequently asked questions
           </h2>
           <p className="text-zinc-400 text-center mb-12">
-            Everything you need to know about TradeSmartHub pricing and
-            features.
+            Everything you need to know about TradeSmart pricing and features.
           </p>
 
           <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 px-6">
@@ -431,9 +410,8 @@ export default function PricingPage() {
               Ready to find your edge?
             </h2>
             <p className="text-zinc-400 mb-8 max-w-xl mx-auto">
-              Join thousands of traders using TradeSmartHub to discover
-              profitable opportunities across betting, stocks, and crypto
-              markets.
+              Join thousands of traders using TradeSmart to discover profitable
+              opportunities across betting, stocks, and crypto markets.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
@@ -466,7 +444,7 @@ export default function PricingPage() {
                 <TrendingUp className="h-4 w-4 text-black" />
               </div>
               <span className="text-sm text-zinc-400">
-                TradeSmartHub - Market Intelligence Platform
+                TradeSmart - Market Intelligence Platform
               </span>
             </div>
             <div className="flex items-center gap-6 text-sm text-zinc-500">

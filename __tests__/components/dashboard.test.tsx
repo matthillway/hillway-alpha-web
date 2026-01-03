@@ -125,7 +125,7 @@ describe("DashboardPage", () => {
     render(<DashboardPage />);
 
     await waitFor(() => {
-      expect(screen.getByText("TradeSmartHub")).toBeInTheDocument();
+      expect(screen.getByText("TradeSmart")).toBeInTheDocument();
     });
   });
 

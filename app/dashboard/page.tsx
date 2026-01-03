@@ -194,29 +194,35 @@ export default function DashboardPage() {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">
-                TradeSmartHub
-              </span>
+              <span className="text-xl font-bold text-white">TradeSmart</span>
             </div>
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => fetchData()}
                 disabled={refreshing}
                 className="text-gray-400 hover:text-white disabled:opacity-50"
+                aria-label="Refresh data"
               >
                 <RefreshCw
                   className={`w-5 h-5 ${refreshing ? "animate-spin" : ""}`}
                 />
               </button>
-              <button className="text-gray-400 hover:text-white">
+              <button
+                className="text-gray-400 hover:text-white"
+                aria-label="Notifications"
+              >
                 <Bell className="w-5 h-5" />
               </button>
-              <button className="text-gray-400 hover:text-white">
+              <button
+                className="text-gray-400 hover:text-white"
+                aria-label="Settings"
+              >
                 <Settings className="w-5 h-5" />
               </button>
               <button
                 onClick={handleSignOut}
                 className="text-gray-400 hover:text-white"
+                aria-label="Sign out"
               >
                 <LogOut className="w-5 h-5" />
               </button>

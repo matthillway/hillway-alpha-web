@@ -1,5 +1,5 @@
 /**
- * Email service for TradeSmartHub
+ * Email service for TradeSmart
  *
  * Uses Resend for transactional email delivery.
  * All emails are sent from noreply@tradesmarthub.com
@@ -23,7 +23,7 @@ import {
 
 // Default configuration
 const DEFAULT_CONFIG: EmailConfig = {
-  from: "TradeSmartHub <noreply@tradesmarthub.com>",
+  from: "TradeSmart <noreply@tradesmarthub.com>",
   baseUrl: process.env.NEXT_PUBLIC_APP_URL || "https://tradesmarthub.com",
 };
 

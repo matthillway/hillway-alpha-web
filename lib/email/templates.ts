@@ -1,5 +1,5 @@
 /**
- * Email templates for TradeSmartHub
+ * Email templates for TradeSmart
  *
  * These templates use a simple HTML structure that works well across email clients.
  * Styles are inlined for maximum compatibility.
@@ -15,7 +15,7 @@ import type {
 } from "./types";
 
 const BRAND_COLOR = "#3B82F6"; // Blue-500
-const BRAND_NAME = "TradeSmartHub";
+const BRAND_NAME = "TradeSmart";
 const SUPPORT_EMAIL = "support@tradesmarthub.com";
 
 // Base layout wrapper for all emails

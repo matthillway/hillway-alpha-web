@@ -2,9 +2,9 @@ import Link from "next/link";
 import { TrendingUp, ArrowLeft, AlertTriangle } from "lucide-react";
 
 export const metadata = {
-  title: "Risk Disclaimer | TradeSmartHub",
+  title: "Risk Disclaimer | TradeSmart",
   description:
-    "Important risk disclaimers for betting and trading activities on TradeSmartHub",
+    "Important risk disclaimers for betting and trading activities on TradeSmart",
 };
 
 export default function DisclaimerPage() {
@@ -17,7 +17,7 @@ export default function DisclaimerPage() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500">
               <TrendingUp className="h-5 w-5 text-black" />
             </div>
-            <span className="text-xl font-bold text-white">TradeSmartHub</span>
+            <span className="text-xl font-bold text-white">TradeSmart</span>
           </Link>
           <Link
             href="/"
@@ -44,10 +44,10 @@ export default function DisclaimerPage() {
               </h2>
               <p className="text-amber-200/80 leading-relaxed">
                 Trading and betting involve substantial risk of loss. You could
-                lose some or all of your invested capital. TradeSmartHub
-                provides information only and does not constitute financial,
-                investment, or betting advice. Please read this entire
-                disclaimer before using our service.
+                lose some or all of your invested capital. TradeSmart provides
+                information only and does not constitute financial, investment,
+                or betting advice. Please read this entire disclaimer before
+                using our service.
               </p>
             </div>
           </div>
@@ -59,7 +59,7 @@ export default function DisclaimerPage() {
               1. Not Financial Advice
             </h2>
             <p className="text-zinc-300 leading-relaxed">
-              TradeSmartHub and all content, tools, and information provided
+              TradeSmart and all content, tools, and information provided
               through the Service are for
               <strong className="text-white">
                 {" "}
@@ -143,10 +143,10 @@ export default function DisclaimerPage() {
                 Past performance is not indicative of future results.
               </strong>{" "}
               Any examples, statistics, profit figures, or backtested results
-              shown on TradeSmartHub are purely illustrative and do not
-              guarantee future performance. Historical data may not reflect
-              current market conditions, and strategies that worked in the past
-              may not work in the future.
+              shown on TradeSmart are purely illustrative and do not guarantee
+              future performance. Historical data may not reflect current market
+              conditions, and strategies that worked in the past may not work in
+              the future.
             </p>
           </section>
 
@@ -188,7 +188,7 @@ export default function DisclaimerPage() {
                   You must be at least 18 years of age
                 </strong>{" "}
                 (or the legal age for gambling and trading in your jurisdiction,
-                whichever is higher) to use TradeSmartHub. By using the Service,
+                whichever is higher) to use TradeSmart. By using the Service,
                 you confirm that you meet these age requirements.
               </p>
             </div>
@@ -263,7 +263,7 @@ export default function DisclaimerPage() {
               7. Third-Party Data and Services
             </h2>
             <p className="text-zinc-300 leading-relaxed">
-              TradeSmartHub aggregates data from third-party sources including
+              TradeSmart aggregates data from third-party sources including
               bookmakers, exchanges, and market data providers. We are not
               responsible for:
             </p>
@@ -283,7 +283,7 @@ export default function DisclaimerPage() {
               8. Your Responsibility
             </h2>
             <p className="text-zinc-300 leading-relaxed mb-4">
-              By using TradeSmartHub, you acknowledge and agree that:
+              By using TradeSmart, you acknowledge and agree that:
             </p>
             <ul className="list-disc list-inside text-zinc-300 space-y-2 ml-4">
               <li>
@@ -307,8 +307,8 @@ export default function DisclaimerPage() {
                 your jurisdiction
               </li>
               <li>
-                You will not hold TradeSmartHub or Matt Fitzgerald liable for
-                any losses
+                You will not hold TradeSmart or Matt Fitzgerald liable for any
+                losses
               </li>
             </ul>
           </section>
@@ -318,7 +318,7 @@ export default function DisclaimerPage() {
               9. Limitation of Liability
             </h2>
             <p className="text-zinc-300 leading-relaxed">
-              TO THE MAXIMUM EXTENT PERMITTED BY LAW, TRADESMARTHUB AND MATT
+              TO THE MAXIMUM EXTENT PERMITTED BY LAW, TRADESMART AND MATT
               FITZGERALD SHALL NOT BE LIABLE FOR ANY TRADING LOSSES, BETTING
               LOSSES, LOST PROFITS, OR ANY OTHER DAMAGES ARISING FROM YOUR USE
               OF THE SERVICE OR RELIANCE ON ANY INFORMATION PROVIDED. THIS
@@ -340,14 +340,14 @@ export default function DisclaimerPage() {
             <p className="text-zinc-300 leading-relaxed mb-4">
               <strong className="text-white">United Kingdom:</strong> Online
               gambling in the UK is regulated by the Gambling Commission.
-              TradeSmartHub is not a gambling operator and does not hold a
-              Gambling Commission licence. We provide information tools only.
+              TradeSmart is not a gambling operator and does not hold a Gambling
+              Commission licence. We provide information tools only.
             </p>
             <p className="text-zinc-300 leading-relaxed">
               <strong className="text-white">Other Jurisdictions:</strong> The
               legality of online gambling and certain trading activities varies
               by jurisdiction. It is your responsibility to ensure that your use
-              of TradeSmartHub complies with local laws.
+              of TradeSmart complies with local laws.
             </p>
           </section>
 
@@ -383,7 +383,7 @@ export default function DisclaimerPage() {
           {/* Final Warning */}
           <section className="mt-12 p-6 rounded-xl bg-zinc-900 border border-zinc-800">
             <p className="text-zinc-300 leading-relaxed text-center">
-              By using TradeSmartHub, you acknowledge that you have read,
+              By using TradeSmart, you acknowledge that you have read,
               understood, and agree to this Risk Disclaimer in its entirety. If
               you do not agree with any part of this disclaimer, please do not
               use the Service.
@@ -401,7 +401,7 @@ export default function DisclaimerPage() {
                 <TrendingUp className="h-4 w-4 text-black" />
               </div>
               <span className="text-sm text-zinc-400">
-                TradeSmartHub - Multi-Asset Opportunity Scanner
+                TradeSmart - Multi-Asset Opportunity Scanner
               </span>
             </div>
             <div className="flex items-center gap-6 text-sm text-zinc-500">

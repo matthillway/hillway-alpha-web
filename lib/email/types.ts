@@ -1,5 +1,5 @@
 /**
- * Email types for TradeSmartHub
+ * Email types for TradeSmart
  */
 
 export interface EmailRecipient {

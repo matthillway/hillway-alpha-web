@@ -1,10 +1,10 @@
-# TradeSmartHub - Multi-Asset Opportunity Scanner
+# TradeSmart - Multi-Asset Opportunity Scanner
 
 AI-powered scanner for betting arbitrage, value bets, stock momentum, and crypto opportunities. Built for traders who want data-driven edge.
 
 ## Overview
 
-TradeSmartHub is the web interface and SaaS platform for the Hillway Alpha multi-asset opportunity scanner. It provides:
+TradeSmart is the web interface and SaaS platform for the Hillway Alpha multi-asset opportunity scanner. It provides:
 
 - **Betting Scanner**: Arbitrage detection and value bet identification across UK bookmakers
 - **Stock Scanner**: Momentum signals, technical indicators (RSI, MACD, Bollinger Bands)

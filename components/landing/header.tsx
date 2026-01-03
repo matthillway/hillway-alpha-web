@@ -17,7 +17,7 @@ export function Header() {
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-white">TradeSmartHub</span>
+            <span className="text-xl font-bold text-white">TradeSmart</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -56,6 +56,8 @@ export function Header() {
           <button
             className="md:hidden text-gray-400 hover:text-white"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMenuOpen}
           >
             {isMenuOpen ? (
               <X className="w-6 h-6" />

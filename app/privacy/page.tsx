@@ -2,9 +2,9 @@ import Link from "next/link";
 import { TrendingUp, ArrowLeft } from "lucide-react";
 
 export const metadata = {
-  title: "Privacy Policy | TradeSmartHub",
+  title: "Privacy Policy | TradeSmart",
   description:
-    "Privacy Policy for TradeSmartHub - How we collect, use, and protect your data",
+    "Privacy Policy for TradeSmart - How we collect, use, and protect your data",
 };
 
 export default function PrivacyPage() {
@@ -17,7 +17,7 @@ export default function PrivacyPage() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500">
               <TrendingUp className="h-5 w-5 text-black" />
             </div>
-            <span className="text-xl font-bold text-white">TradeSmartHub</span>
+            <span className="text-xl font-bold text-white">TradeSmart</span>
           </Link>
           <Link
             href="/"
@@ -40,7 +40,7 @@ export default function PrivacyPage() {
               1. Introduction
             </h2>
             <p className="text-zinc-300 leading-relaxed">
-              TradeSmartHub, operated by Matt Fitzgerald (&quot;we&quot;,
+              TradeSmart, operated by Matt Fitzgerald (&quot;we&quot;,
               &quot;us&quot;, or &quot;our&quot;), is committed to protecting
               your privacy. This Privacy Policy explains how we collect, use,
               disclose, and safeguard your information when you use our
@@ -139,8 +139,7 @@ export default function PrivacyPage() {
               4. Third-Party Services
             </h2>
             <p className="text-zinc-300 leading-relaxed mb-4">
-              We use the following third-party services to operate
-              TradeSmartHub:
+              We use the following third-party services to operate TradeSmart:
             </p>
 
             <div className="space-y-4">
@@ -363,11 +362,11 @@ export default function PrivacyPage() {
               10. Children&apos;s Privacy
             </h2>
             <p className="text-zinc-300 leading-relaxed">
-              TradeSmartHub is not intended for individuals under 18 years of
-              age. We do not knowingly collect personal information from
-              children under 18. If you become aware that a child has provided
-              us with personal information, please contact us, and we will take
-              steps to delete such information.
+              TradeSmart is not intended for individuals under 18 years of age.
+              We do not knowingly collect personal information from children
+              under 18. If you become aware that a child has provided us with
+              personal information, please contact us, and we will take steps to
+              delete such information.
             </p>
           </section>
 
@@ -430,7 +429,7 @@ export default function PrivacyPage() {
                 <TrendingUp className="h-4 w-4 text-black" />
               </div>
               <span className="text-sm text-zinc-400">
-                TradeSmartHub - Multi-Asset Opportunity Scanner
+                TradeSmart - Multi-Asset Opportunity Scanner
               </span>
             </div>
             <div className="flex items-center gap-6 text-sm text-zinc-500">

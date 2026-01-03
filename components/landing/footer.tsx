@@ -12,9 +12,7 @@ export function Footer() {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">
-                TradeSmartHub
-              </span>
+              <span className="text-xl font-bold text-white">TradeSmart</span>
             </Link>
             <p className="text-gray-400 max-w-md">
               AI-powered multi-asset opportunity scanner. Find profitable
@@ -24,18 +22,21 @@ export function Footer() {
               <a
                 href="#"
                 className="text-gray-400 hover:text-white transition-colors"
+                aria-label="Follow us on Twitter"
               >
                 <Twitter className="w-5 h-5" />
               </a>
               <a
                 href="#"
                 className="text-gray-400 hover:text-white transition-colors"
+                aria-label="View our GitHub"
               >
                 <Github className="w-5 h-5" />
               </a>
               <a
                 href="#"
                 className="text-gray-400 hover:text-white transition-colors"
+                aria-label="Connect on LinkedIn"
               >
                 <Linkedin className="w-5 h-5" />
               </a>
@@ -115,8 +116,7 @@ export function Footer() {
 
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} TradeSmartHub. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} TradeSmart. All rights reserved.
           </p>
           <p className="text-gray-500 text-sm mt-2 md:mt-0">Powered by AI</p>
         </div>

@@ -5,8 +5,7 @@ const steps = [
     step: 1,
     icon: Scan,
     title: "Continuous Scanning",
-    description:
-      "Our AI monitors betting odds, stock prices, and crypto funding rates 24/7. We analyze thousands of data points every minute across multiple markets.",
+    description: "AI monitors odds, prices, and rates 24/7 across all markets.",
     color: "blue",
   },
   {
@@ -14,23 +13,21 @@ const steps = [
     icon: Filter,
     title: "Smart Filtering",
     description:
-      "Advanced algorithms filter out noise and identify genuine opportunities. Only signals that meet our strict profit and risk criteria make it through.",
+      "Only high-confidence opportunities that meet strict criteria.",
     color: "purple",
   },
   {
     step: 3,
     icon: Bell,
     title: "Instant Alerts",
-    description:
-      "Get notified immediately via WhatsApp or email. Each alert includes all the details you need to act: entry points, expected profit, and time sensitivity.",
+    description: "WhatsApp or email with entry points and expected profit.",
     color: "pink",
   },
   {
     step: 4,
     icon: TrendingUp,
     title: "Execute & Profit",
-    description:
-      "Follow the clear instructions in each alert to capture the opportunity. Track your results in your personal dashboard and watch your portfolio grow.",
+    description: "Clear instructions to act. Track results in your dashboard.",
     color: "green",
   },
 ];
@@ -66,7 +63,7 @@ export function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="py-24 bg-gray-900 relative overflow-hidden"
+      className="py-32 bg-gray-900 relative overflow-hidden"
     >
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950" />
@@ -77,7 +74,7 @@ export function HowItWorks() {
           <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
             How{" "}
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              TradeSmartHub
+              TradeSmart
             </span>{" "}
             Works
           </h2>
@@ -127,51 +124,6 @@ export function HowItWorks() {
                 </div>
               );
             })}
-          </div>
-        </div>
-
-        {/* Bottom visual - sample alert mockup */}
-        <div className="mt-20 relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-3xl blur-xl" />
-          <div className="relative bg-gray-800/80 border border-gray-700 rounded-2xl p-6 sm:p-8 backdrop-blur-sm max-w-3xl mx-auto">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="w-6 h-6 text-white" />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-green-400 font-semibold">
-                    ARBITRAGE ALERT
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 text-xs">
-                    HIGH CONFIDENCE
-                  </span>
-                </div>
-                <h4 className="text-xl text-white font-medium mb-2">
-                  Man City vs Arsenal - Over 2.5 Goals
-                </h4>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-                  <div>
-                    <span className="text-gray-500">Bet365:</span>
-                    <span className="text-white ml-2">2.10</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">Betfair:</span>
-                    <span className="text-white ml-2">1.95</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">Profit:</span>
-                    <span className="text-green-400 ml-2 font-semibold">
-                      3.2%
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">Expires:</span>
-                    <span className="text-yellow-400 ml-2">12 min</span>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

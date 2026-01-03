@@ -72,7 +72,7 @@ export function SocialProof() {
             </span>
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Join thousands of traders who use TradeSmartHub to find profitable
+            Join thousands of traders who use TradeSmart to find profitable
             opportunities every day.
           </p>
         </div>

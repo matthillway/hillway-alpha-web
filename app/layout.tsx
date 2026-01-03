@@ -15,7 +15,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tradesmarthub.com"),
-  title: "TradeSmartHub - AI-Powered Multi-Asset Opportunity Scanner",
+  title: "TradeSmart - AI-Powered Multi-Asset Opportunity Scanner",
   description:
     "Find profitable opportunities across betting arbitrage, stock momentum, and crypto funding rates. Get real-time alerts delivered to your phone. Start your free trial today.",
   keywords: [
@@ -28,28 +28,28 @@ export const metadata: Metadata = {
     "opportunity scanner",
     "market signals",
   ],
-  authors: [{ name: "TradeSmartHub" }],
-  creator: "TradeSmartHub",
+  authors: [{ name: "TradeSmart" }],
+  creator: "TradeSmart",
   openGraph: {
     type: "website",
     locale: "en_GB",
     url: "https://tradesmarthub.com",
-    title: "TradeSmartHub - AI-Powered Multi-Asset Opportunity Scanner",
+    title: "TradeSmart - AI-Powered Multi-Asset Opportunity Scanner",
     description:
       "Find profitable opportunities across betting arbitrage, stock momentum, and crypto funding rates. Get real-time alerts delivered to your phone.",
-    siteName: "TradeSmartHub",
+    siteName: "TradeSmart",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "TradeSmartHub - Find Alpha Across Every Market",
+        alt: "TradeSmart - Find Alpha Across Every Market",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "TradeSmartHub - AI-Powered Multi-Asset Opportunity Scanner",
+    title: "TradeSmart - AI-Powered Multi-Asset Opportunity Scanner",
     description:
       "Find profitable opportunities across betting arbitrage, stock momentum, and crypto funding rates.",
     images: ["/og-image.png"],

@@ -25,6 +25,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -139,7 +140,7 @@ export default function LoginPage() {
         setError(resetError.message);
       } else {
         setError("");
-        alert("Password reset email sent! Check your inbox.");
+        setSuccess("Password reset email sent! Check your inbox.");
       }
     } catch {
       setError("An unexpected error occurred. Please try again.");
@@ -161,7 +162,7 @@ export default function LoginPage() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
               <Zap className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold text-white">TradeSmartHub</span>
+            <span className="text-2xl font-bold text-white">TradeSmart</span>
           </Link>
         </div>
 
@@ -238,6 +239,26 @@ export default function LoginPage() {
             <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center gap-2">
               <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
               <span className="text-sm text-red-400">{error}</span>
+            </div>
+          )}
+
+          {/* Success Message */}
+          {success && (
+            <div className="mb-4 p-3 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center gap-2">
+              <svg
+                className="w-5 h-5 text-green-400 flex-shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+              <span className="text-sm text-green-400">{success}</span>
             </div>
           )}
 

@@ -2,9 +2,9 @@ import Link from "next/link";
 import { TrendingUp, ArrowLeft } from "lucide-react";
 
 export const metadata = {
-  title: "Terms of Service | TradeSmartHub",
+  title: "Terms of Service | TradeSmart",
   description:
-    "Terms of Service for TradeSmartHub - Multi-asset opportunity scanner",
+    "Terms of Service for TradeSmart - Multi-asset opportunity scanner",
 };
 
 export default function TermsPage() {
@@ -17,7 +17,7 @@ export default function TermsPage() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500">
               <TrendingUp className="h-5 w-5 text-black" />
             </div>
-            <span className="text-xl font-bold text-white">TradeSmartHub</span>
+            <span className="text-xl font-bold text-white">TradeSmart</span>
           </Link>
           <Link
             href="/"
@@ -40,7 +40,7 @@ export default function TermsPage() {
               1. Agreement to Terms
             </h2>
             <p className="text-zinc-300 leading-relaxed">
-              By accessing or using TradeSmartHub (&quot;the Service&quot;),
+              By accessing or using TradeSmart (&quot;the Service&quot;),
               operated by Matt Fitzgerald (&quot;we&quot;, &quot;us&quot;, or
               &quot;our&quot;), located in Sheffield, United Kingdom, you agree
               to be bound by these Terms of Service. If you do not agree to
@@ -53,7 +53,7 @@ export default function TermsPage() {
               2. Description of Service
             </h2>
             <p className="text-zinc-300 leading-relaxed">
-              TradeSmartHub is a multi-asset opportunity scanner that provides
+              TradeSmart is a multi-asset opportunity scanner that provides
               information about potential opportunities in betting arbitrage,
               stock momentum, and cryptocurrency markets. The Service includes
               web-based tools, alerts, and analytical features designed to help
@@ -315,7 +315,7 @@ export default function TermsPage() {
                 <TrendingUp className="h-4 w-4 text-black" />
               </div>
               <span className="text-sm text-zinc-400">
-                TradeSmartHub - Multi-Asset Opportunity Scanner
+                TradeSmart - Multi-Asset Opportunity Scanner
               </span>
             </div>
             <div className="flex items-center gap-6 text-sm text-zinc-500">
