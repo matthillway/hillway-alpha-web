@@ -84,7 +84,7 @@ export default function LoginPage() {
       if (data.user) {
         router.push('/dashboard');
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);
@@ -106,7 +106,7 @@ export default function LoginPage() {
       if (oauthError) {
         setError(oauthError.message);
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);
@@ -137,7 +137,7 @@ export default function LoginPage() {
         setError('');
         alert('Password reset email sent! Check your inbox.');
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);

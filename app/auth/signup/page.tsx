@@ -129,7 +129,7 @@ function SignUpForm() {
       if (data.user) {
         router.push('/dashboard');
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);
@@ -151,7 +151,7 @@ function SignUpForm() {
       if (oauthError) {
         setError(oauthError.message);
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);

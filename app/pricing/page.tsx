@@ -144,13 +144,7 @@ const faqs = [
   },
 ];
 
-function FAQItem({
-  question,
-  answer,
-}: {
-  question: string;
-  answer: string;
-}) {
+function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -214,8 +208,9 @@ export default function PricingPage() {
             Simple, transparent pricing
           </h1>
           <p className="mt-6 text-lg text-zinc-400 max-w-2xl mx-auto">
-            Choose the plan that fits your trading style. Start free, upgrade when you're ready.
-            All plans include our core scanning technology.
+            Choose the plan that fits your trading style. Start free, upgrade
+            when you&apos;re ready. All plans include our core scanning
+            technology.
           </p>
         </div>
       </section>
@@ -253,7 +248,9 @@ export default function PricingPage() {
                     >
                       <IconComponent className="h-5 w-5" />
                     </div>
-                    <h3 className="text-lg font-semibold text-white">{tier.name}</h3>
+                    <h3 className="text-lg font-semibold text-white">
+                      {tier.name}
+                    </h3>
                   </div>
 
                   <div className="mb-2">
@@ -264,7 +261,9 @@ export default function PricingPage() {
                       <span className="text-zinc-400">/month</span>
                     )}
                   </div>
-                  <p className="text-sm text-zinc-400 mb-6">{tier.description}</p>
+                  <p className="text-sm text-zinc-400 mb-6">
+                    {tier.description}
+                  </p>
 
                   <ul className="mb-6 flex-1 space-y-3">
                     {tier.features.map((feature, index) => (
@@ -306,11 +305,11 @@ export default function PricingPage() {
       <section className="border-t border-zinc-800 py-20">
         <div className="mx-auto max-w-7xl px-6">
           <h2 className="text-2xl font-bold text-white text-center mb-4">
-            What's included in each plan
+            What&apos;s included in each plan
           </h2>
           <p className="text-zinc-400 text-center mb-12 max-w-2xl mx-auto">
-            Every plan is built on our core AI scanning technology. Higher tiers unlock more markets,
-            faster alerts, and advanced features.
+            Every plan is built on our core AI scanning technology. Higher tiers
+            unlock more markets, faster alerts, and advanced features.
           </p>
 
           <div className="grid gap-8 md:grid-cols-3">
@@ -322,8 +321,9 @@ export default function PricingPage() {
                 Betting Arbitrage Scanner
               </h3>
               <p className="text-zinc-400 text-sm">
-                Find guaranteed profit opportunities across bookmakers. Our scanner compares odds
-                in real-time and calculates optimal stake distribution.
+                Find guaranteed profit opportunities across bookmakers. Our
+                scanner compares odds in real-time and calculates optimal stake
+                distribution.
               </p>
             </div>
 
@@ -335,8 +335,9 @@ export default function PricingPage() {
                 Stock Momentum Scanner
               </h3>
               <p className="text-zinc-400 text-sm">
-                Identify stocks showing unusual momentum patterns before they break out.
-                Combines technical analysis with volume signals. Pro and above.
+                Identify stocks showing unusual momentum patterns before they
+                break out. Combines technical analysis with volume signals. Pro
+                and above.
               </p>
             </div>
 
@@ -348,8 +349,9 @@ export default function PricingPage() {
                 Crypto Funding Rates
               </h3>
               <p className="text-zinc-400 text-sm">
-                Track perpetual funding rates across exchanges. Spot arbitrage opportunities
-                and predict market sentiment shifts. Pro and above.
+                Track perpetual funding rates across exchanges. Spot arbitrage
+                opportunities and predict market sentiment shifts. Pro and
+                above.
               </p>
             </div>
 
@@ -361,8 +363,9 @@ export default function PricingPage() {
                 Real-Time Alerts
               </h3>
               <p className="text-zinc-400 text-sm">
-                Get notified instantly via WhatsApp when opportunities arise. Never miss
-                a trade again with sub-second alert delivery. Pro and above.
+                Get notified instantly via WhatsApp when opportunities arise.
+                Never miss a trade again with sub-second alert delivery. Pro and
+                above.
               </p>
             </div>
 
@@ -374,8 +377,9 @@ export default function PricingPage() {
                 AI-Powered Insights
               </h3>
               <p className="text-zinc-400 text-sm">
-                Our AI explains why opportunities exist, predicts how long they'll last,
-                and provides confidence scores for each alert. Pro and above.
+                Our AI explains why opportunities exist, predicts how long
+                they&apos;ll last, and provides confidence scores for each
+                alert. Pro and above.
               </p>
             </div>
 
@@ -387,8 +391,9 @@ export default function PricingPage() {
                 API Access
               </h3>
               <p className="text-zinc-400 text-sm">
-                Integrate Hillway Alpha data into your own trading systems, spreadsheets,
-                or custom applications. Full REST API. Enterprise only.
+                Integrate Hillway Alpha data into your own trading systems,
+                spreadsheets, or custom applications. Full REST API. Enterprise
+                only.
               </p>
             </div>
           </div>
@@ -402,12 +407,17 @@ export default function PricingPage() {
             Frequently asked questions
           </h2>
           <p className="text-zinc-400 text-center mb-12">
-            Everything you need to know about Hillway Alpha pricing and features.
+            Everything you need to know about Hillway Alpha pricing and
+            features.
           </p>
 
           <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 px-6">
             {faqs.map((faq, index) => (
-              <FAQItem key={index} question={faq.question} answer={faq.answer} />
+              <FAQItem
+                key={index}
+                question={faq.question}
+                answer={faq.answer}
+              />
             ))}
           </div>
         </div>
@@ -421,8 +431,9 @@ export default function PricingPage() {
               Ready to find your edge?
             </h2>
             <p className="text-zinc-400 mb-8 max-w-xl mx-auto">
-              Join thousands of traders using Hillway Alpha to discover profitable opportunities
-              across betting, stocks, and crypto markets.
+              Join thousands of traders using Hillway Alpha to discover
+              profitable opportunities across betting, stocks, and crypto
+              markets.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
@@ -459,13 +470,22 @@ export default function PricingPage() {
               </span>
             </div>
             <div className="flex items-center gap-6 text-sm text-zinc-500">
-              <Link href="/terms" className="hover:text-zinc-300 transition-colors">
+              <Link
+                href="/terms"
+                className="hover:text-zinc-300 transition-colors"
+              >
                 Terms
               </Link>
-              <Link href="/privacy" className="hover:text-zinc-300 transition-colors">
+              <Link
+                href="/privacy"
+                className="hover:text-zinc-300 transition-colors"
+              >
                 Privacy
               </Link>
-              <Link href="/contact" className="hover:text-zinc-300 transition-colors">
+              <Link
+                href="/contact"
+                className="hover:text-zinc-300 transition-colors"
+              >
                 Contact
               </Link>
             </div>
