@@ -23,7 +23,7 @@ const tiers = [
   {
     name: "Free",
     price: "0",
-    description: "Try Hillway Alpha with sample data",
+    description: "Try TradeSmartHub with sample data",
     icon: Gift,
     features: [
       { text: "Demo mode only", included: true },
@@ -103,9 +103,9 @@ const tiers = [
 
 const faqs = [
   {
-    question: "What is Hillway Alpha?",
+    question: "What is TradeSmartHub?",
     answer:
-      "Hillway Alpha is an AI-powered market intelligence platform that scans for profitable opportunities across betting arbitrage, stock momentum, and crypto funding rates. Our algorithms identify edges that most traders miss.",
+      "TradeSmartHub is an AI-powered market intelligence platform that scans for profitable opportunities across betting arbitrage, stock momentum, and crypto funding rates. Our algorithms identify edges that most traders miss.",
   },
   {
     question: "How does the free trial work?",
@@ -135,7 +135,7 @@ const faqs = [
   {
     question: "What's included in API access?",
     answer:
-      "Enterprise API access lets you integrate Hillway Alpha data directly into your trading systems, spreadsheets, or custom applications. Full REST API documentation and support included.",
+      "Enterprise API access lets you integrate TradeSmartHub data directly into your trading systems, spreadsheets, or custom applications. Full REST API documentation and support included.",
   },
   {
     question: "Do you offer annual billing?",
@@ -177,7 +177,7 @@ export default function PricingPage() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500">
               <TrendingUp className="h-5 w-5 text-black" />
             </div>
-            <span className="text-xl font-bold text-white">Hillway Alpha</span>
+            <span className="text-xl font-bold text-white">TradeSmartHub</span>
           </Link>
           <div className="flex items-center gap-4">
             <Link
@@ -391,7 +391,7 @@ export default function PricingPage() {
                 API Access
               </h3>
               <p className="text-zinc-400 text-sm">
-                Integrate Hillway Alpha data into your own trading systems,
+                Integrate TradeSmartHub data into your own trading systems,
                 spreadsheets, or custom applications. Full REST API. Enterprise
                 only.
               </p>
@@ -407,7 +407,7 @@ export default function PricingPage() {
             Frequently asked questions
           </h2>
           <p className="text-zinc-400 text-center mb-12">
-            Everything you need to know about Hillway Alpha pricing and
+            Everything you need to know about TradeSmartHub pricing and
             features.
           </p>
 
@@ -431,7 +431,7 @@ export default function PricingPage() {
               Ready to find your edge?
             </h2>
             <p className="text-zinc-400 mb-8 max-w-xl mx-auto">
-              Join thousands of traders using Hillway Alpha to discover
+              Join thousands of traders using TradeSmartHub to discover
               profitable opportunities across betting, stocks, and crypto
               markets.
             </p>
@@ -466,7 +466,7 @@ export default function PricingPage() {
                 <TrendingUp className="h-4 w-4 text-black" />
               </div>
               <span className="text-sm text-zinc-400">
-                Hillway Alpha - Market Intelligence Platform
+                TradeSmartHub - Market Intelligence Platform
               </span>
             </div>
             <div className="flex items-center gap-6 text-sm text-zinc-500">
