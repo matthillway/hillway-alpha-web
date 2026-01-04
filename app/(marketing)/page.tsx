@@ -31,15 +31,34 @@ export default function HomePage() {
         Skip to main content
       </a>
 
-      <div id="main-content">
+      <main id="main-content">
+        {/* Hero - generous padding built in */}
         <Hero />
+
+        {/* Visual separator */}
+        <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+
+        {/* Stats section */}
         <Stats />
+
+        {/* Problem/Solution - uses gray-50 bg for visual break */}
         <ProblemSolution />
+
+        {/* How it works - white bg */}
         <HowItWorks />
+
+        {/* Visual separator */}
+        <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+
+        {/* Features - white bg with cards */}
         <FeaturesGrid />
+
+        {/* Testimonials - gray-50 bg */}
         <Testimonials />
+
+        {/* Final CTA - emerald gradient */}
         <CTASection />
-      </div>
+      </main>
     </>
   );
 }

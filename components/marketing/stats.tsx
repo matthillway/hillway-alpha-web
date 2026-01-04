@@ -2,53 +2,65 @@ import { BarChart3, Target, Layers, Clock } from "lucide-react";
 
 const stats = [
   {
-    label: "Opportunities Scanned",
     value: "10,000+",
+    label: "Opportunities Scanned",
+    sublabel: "Daily",
     icon: BarChart3,
-    description: "Daily",
   },
   {
-    label: "Alert Accuracy",
     value: "97%",
+    label: "Alert Accuracy",
+    sublabel: "Precision",
     icon: Target,
-    description: "Precision",
   },
   {
-    label: "Markets Covered",
     value: "3",
+    label: "Asset Classes",
+    sublabel: "Markets Covered",
     icon: Layers,
-    description: "Asset Classes",
   },
   {
-    label: "AI Monitoring",
     value: "24/7",
+    label: "AI Monitoring",
+    sublabel: "Non-stop",
     icon: Clock,
-    description: "Non-stop",
   },
 ];
 
 export function Stats() {
   return (
-    <section className="py-16 bg-white">
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+    <section className="py-24 lg:py-32 bg-white">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        {/* Optional section header */}
+        <div className="text-center mb-16">
+          <p className="text-sm font-semibold uppercase tracking-widest text-emerald-600 mb-3">
+            Platform Statistics
+          </p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+            Built for serious traders
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-2 gap-8 lg:grid-cols-4 lg:gap-12">
           {stats.map((stat) => {
             const IconComponent = stat.icon;
             return (
-              <div
-                key={stat.label}
-                className="relative rounded-2xl border border-gray-100 bg-gray-50/50 p-6 text-center"
-              >
-                <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 mb-4">
-                  <IconComponent className="h-5 w-5" />
+              <div key={stat.label} className="relative group text-center">
+                {/* Icon */}
+                <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 mb-6 transition-colors group-hover:bg-emerald-100">
+                  <IconComponent className="h-6 w-6" />
                 </div>
-                <div className="text-3xl font-bold text-gray-900">
+
+                {/* Value */}
+                <div className="text-4xl sm:text-5xl font-bold text-gray-900 tracking-tight">
                   {stat.value}
                 </div>
-                <div className="text-sm text-gray-500 mt-1">
-                  {stat.description}
+
+                {/* Labels */}
+                <div className="mt-3 text-sm font-medium text-gray-900">
+                  {stat.sublabel}
                 </div>
-                <div className="text-xs text-gray-400 mt-1">{stat.label}</div>
+                <div className="mt-1 text-sm text-gray-500">{stat.label}</div>
               </div>
             );
           })}

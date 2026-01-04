@@ -1,6 +1,15 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { Check, X, Zap, Trophy, Crown, TrendingUp } from "lucide-react";
+import {
+  Check,
+  X,
+  Zap,
+  Trophy,
+  Crown,
+  TrendingUp,
+  ArrowRight,
+  Sparkles,
+} from "lucide-react";
 import { FAQ } from "@/components/marketing";
 
 export const metadata: Metadata = {
@@ -18,7 +27,7 @@ const tiers = [
   {
     name: "Starter",
     price: "19",
-    description: "Perfect for casual arbitrage hunters",
+    description: "Perfect for casual arbitrage hunters looking to get started",
     icon: Zap,
     features: [
       { text: "Betting arbitrage scanner", included: true },
@@ -34,11 +43,12 @@ const tiers = [
     href: "/login?plan=starter",
     highlighted: false,
     badge: null,
+    gradient: "from-gray-400 to-gray-500",
   },
   {
     name: "Pro",
     price: "49",
-    description: "For serious traders who want an edge",
+    description: "For serious traders who want an edge across all markets",
     icon: Trophy,
     features: [
       { text: "Everything in Starter", included: true },
@@ -54,11 +64,12 @@ const tiers = [
     href: "/login?plan=pro",
     highlighted: true,
     badge: "Most Popular",
+    gradient: "from-emerald-500 to-emerald-600",
   },
   {
     name: "Enterprise",
     price: "149",
-    description: "For teams and power users",
+    description: "For teams and power users who need unlimited access",
     icon: Crown,
     features: [
       { text: "Everything in Pro", included: true },
@@ -74,6 +85,7 @@ const tiers = [
     href: "/contact?plan=enterprise",
     highlighted: false,
     badge: null,
+    gradient: "from-purple-500 to-purple-600",
   },
 ];
 
@@ -109,16 +121,24 @@ export default function PricingPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="pt-32 pb-16 bg-white">
-        <div className="mx-auto max-w-6xl px-6 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-sm text-emerald-700 mb-6">
+      <section className="pt-44 pb-20 lg:pt-52 lg:pb-24 bg-white relative overflow-hidden">
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-emerald-50/50 to-white -z-10" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:64px_64px] -z-10" />
+
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200/80 bg-white/80 backdrop-blur-sm px-5 py-2 text-sm font-medium text-emerald-700 mb-8 shadow-sm">
             <TrendingUp className="h-4 w-4" />
             14-day free trial on Pro
           </div>
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-            Simple, transparent pricing
+
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 leading-[1.1]">
+            Simple, Transparent
+            <br />
+            <span className="text-emerald-600">Pricing</span>
           </h1>
-          <p className="mt-6 text-lg text-gray-600 max-w-2xl mx-auto">
+
+          <p className="mt-8 text-xl sm:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed font-light">
             Choose the plan that fits your trading style. Start with a free
             trial, upgrade when you&apos;re ready.
           </p>
@@ -126,60 +146,66 @@ export default function PricingPage() {
       </section>
 
       {/* Pricing Cards */}
-      <section className="pb-24">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="grid gap-8 lg:grid-cols-3">
+      <section className="pb-32 lg:pb-40">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-3 lg:gap-6">
             {tiers.map((tier) => {
               const IconComponent = tier.icon;
               return (
                 <div
                   key={tier.name}
-                  className={`relative rounded-2xl border ${
+                  className={`relative rounded-3xl ${
                     tier.highlighted
-                      ? "border-2 border-emerald-500 shadow-xl"
-                      : "border-gray-200 shadow-md"
-                  } bg-white p-8 flex flex-col`}
+                      ? "border-2 border-emerald-500 shadow-2xl shadow-emerald-500/20 scale-[1.02] lg:scale-105"
+                      : "border border-gray-200 shadow-lg"
+                  } bg-white p-8 lg:p-10 flex flex-col`}
                 >
                   {tier.badge && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <span className="inline-flex items-center rounded-full bg-emerald-600 px-3 py-1 text-xs font-semibold text-white">
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-4 py-1.5 text-sm font-semibold text-white shadow-lg">
+                        <Sparkles className="h-3.5 w-3.5" />
                         {tier.badge}
                       </span>
                     </div>
                   )}
 
-                  <div className="mb-4 flex items-center gap-3">
-                    <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-                        tier.highlighted
-                          ? "bg-emerald-600 text-white"
-                          : "bg-gray-100 text-gray-600"
-                      }`}
-                    >
-                      <IconComponent className="h-5 w-5" />
+                  {/* Header */}
+                  <div className="mb-8">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div
+                        className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${tier.gradient} text-white shadow-lg`}
+                      >
+                        <IconComponent className="h-6 w-6" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {tier.name}
+                      </h3>
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      {tier.name}
-                    </h3>
+
+                    <div className="flex items-baseline gap-1 mb-3">
+                      <span className="text-5xl font-bold text-gray-900">
+                        £{tier.price}
+                      </span>
+                      <span className="text-gray-500 text-lg">/month</span>
+                    </div>
+
+                    <p className="text-gray-600 leading-relaxed">
+                      {tier.description}
+                    </p>
                   </div>
 
-                  <div className="mb-2">
-                    <span className="text-4xl font-bold text-gray-900">
-                      £{tier.price}
-                    </span>
-                    <span className="text-gray-500">/month</span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-6">
-                    {tier.description}
-                  </p>
-
-                  <ul className="mb-8 flex-1 space-y-3">
+                  {/* Features */}
+                  <ul className="mb-10 flex-1 space-y-4">
                     {tier.features.map((feature, index) => (
                       <li key={index} className="flex items-start gap-3">
                         {feature.included ? (
-                          <Check className="h-5 w-5 text-emerald-600 flex-shrink-0 mt-0.5" />
+                          <div className="flex-shrink-0 h-5 w-5 rounded-full bg-emerald-100 flex items-center justify-center mt-0.5">
+                            <Check className="h-3 w-3 text-emerald-600" />
+                          </div>
                         ) : (
-                          <X className="h-5 w-5 text-gray-300 flex-shrink-0 mt-0.5" />
+                          <div className="flex-shrink-0 h-5 w-5 rounded-full bg-gray-100 flex items-center justify-center mt-0.5">
+                            <X className="h-3 w-3 text-gray-400" />
+                          </div>
                         )}
                         <span
                           className={
@@ -192,57 +218,81 @@ export default function PricingPage() {
                     ))}
                   </ul>
 
+                  {/* CTA */}
                   <Link
                     href={tier.href}
-                    className={`mt-auto block w-full rounded-lg py-3 text-center text-sm font-semibold transition-colors ${
+                    className={`group mt-auto flex items-center justify-center gap-2 w-full rounded-full py-4 text-base font-semibold transition-all duration-200 ${
                       tier.highlighted
-                        ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                        ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 hover:shadow-xl hover:-translate-y-0.5"
                         : "bg-gray-100 text-gray-900 hover:bg-gray-200"
                     }`}
                   >
                     {tier.cta}
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                   </Link>
                 </div>
               );
             })}
           </div>
+
+          {/* Annual discount note */}
+          <p className="mt-12 text-center text-gray-500">
+            Save 17% with annual billing.{" "}
+            <Link
+              href="/contact"
+              className="text-emerald-600 font-medium hover:text-emerald-700"
+            >
+              Contact us
+            </Link>{" "}
+            for custom enterprise pricing.
+          </p>
         </div>
       </section>
 
       {/* FAQ Section */}
-      <section className="py-24 bg-gray-50">
-        <div className="mx-auto max-w-3xl px-6">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-4">
-            Frequently asked questions
-          </h2>
-          <p className="text-gray-600 text-center mb-12">
-            Everything you need to know about TradeSmart pricing.
-          </p>
+      <section className="py-24 lg:py-32 bg-gray-50">
+        <div className="mx-auto max-w-3xl px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold uppercase tracking-widest text-emerald-600 mb-4">
+              FAQ
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+              Frequently Asked Questions
+            </h2>
+            <p className="mt-4 text-lg text-gray-600">
+              Everything you need to know about TradeSmart pricing.
+            </p>
+          </div>
 
           <FAQ items={faqs} />
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-emerald-600">
-        <div className="mx-auto max-w-4xl px-6 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Ready to find your edge?
+      <section className="relative py-32 lg:py-40 overflow-hidden">
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:64px_64px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-emerald-500/30 rounded-full blur-3xl" />
+
+        <div className="relative mx-auto max-w-4xl px-6 lg:px-8 text-center">
+          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6 tracking-tight">
+            Ready to Find Your Edge?
           </h2>
-          <p className="text-emerald-100 mb-8 max-w-xl mx-auto">
+          <p className="text-xl text-emerald-100 mb-10 max-w-2xl mx-auto leading-relaxed">
             Join traders using TradeSmart to discover profitable opportunities
             across betting, stocks, and crypto markets.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/login?plan=pro"
-              className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-emerald-700 hover:bg-gray-50 transition-colors shadow-md"
-            >
-              Start 14-Day Free Trial
-              <TrendingUp className="h-4 w-4" />
-            </Link>
-          </div>
-          <p className="mt-6 text-xs text-emerald-200">
+
+          <Link
+            href="/login?plan=pro"
+            className="group inline-flex items-center gap-3 rounded-full bg-white px-10 py-5 text-lg font-semibold text-emerald-700 hover:bg-gray-50 transition-all duration-200 shadow-xl shadow-black/20 hover:shadow-2xl hover:-translate-y-0.5"
+          >
+            Start 14-Day Free Trial
+            <TrendingUp className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+          </Link>
+
+          <p className="mt-6 text-sm text-emerald-200">
             No credit card required. Cancel anytime.
           </p>
         </div>
