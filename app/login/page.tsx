@@ -1,19 +1,25 @@
 "use client";
 
 import { useState, Suspense, useCallback } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { createBrowserClient } from "@supabase/ssr";
 import { Button } from "@/components/marketing/button";
 import type { ValidateDiscountCodeResponse } from "@/lib/types/discount-codes";
 
+type AuthMode = "password" | "magic-link";
+
 function LoginForm() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const isSignup = searchParams.get("signup") === "true";
   const plan = searchParams.get("plan");
   const initialCode = searchParams.get("code") || "";
 
+  const [authMode, setAuthMode] = useState<AuthMode>("password");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [discountCode, setDiscountCode] = useState(initialCode);
   const [discountValidation, setDiscountValidation] = useState<{
     status: "idle" | "validating" | "valid" | "invalid";
@@ -116,6 +122,71 @@ function LoginForm() {
     return `${window.location.origin}/auth/callback${queryString ? `?${queryString}` : ""}`;
   };
 
+  const handlePasswordAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) return;
+
+    // Validate confirm password for signup
+    if (isSignup && password !== confirmPassword) {
+      setMessage({ type: "error", text: "Passwords do not match" });
+      return;
+    }
+
+    if (isSignup && password.length < 6) {
+      setMessage({
+        type: "error",
+        text: "Password must be at least 6 characters",
+      });
+      return;
+    }
+
+    setLoading(true);
+    setMessage(null);
+
+    try {
+      if (isSignup) {
+        // Sign up with email and password
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: buildRedirectUrl(),
+          },
+        });
+
+        if (error) {
+          setMessage({ type: "error", text: error.message });
+        } else {
+          setMessage({
+            type: "success",
+            text: "Check your email to confirm your account!",
+          });
+        }
+      } else {
+        // Sign in with email and password
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          setMessage({ type: "error", text: error.message });
+        } else {
+          // Redirect to dashboard on successful login
+          router.push("/dashboard");
+        }
+      }
+    } catch (err) {
+      setMessage({
+        type: "error",
+        text:
+          err instanceof Error ? err.message : "An unexpected error occurred",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
@@ -152,13 +223,64 @@ function LoginForm() {
     }
   };
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setMessage({
+        type: "error",
+        text: "Please enter your email address first",
+      });
+      return;
+    }
+
+    setLoading(true);
+    setMessage(null);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
+      });
+
+      if (error) {
+        setMessage({ type: "error", text: error.message });
+      } else {
+        setMessage({
+          type: "success",
+          text: "Check your email for a password reset link!",
+        });
+      }
+    } catch (err) {
+      setMessage({
+        type: "error",
+        text:
+          err instanceof Error ? err.message : "An unexpected error occurred",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
       <div className="max-w-md w-full">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
           <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">TS</span>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              className="text-white"
+            >
+              <path
+                d="M3 18L9 12L13 16L21 8"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="21" cy="8" r="2" fill="currentColor" />
+            </svg>
           </div>
           <span className="font-semibold text-xl text-gray-900">
             TradeSmart
@@ -170,14 +292,44 @@ function LoginForm() {
           <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">
             {isSignup ? "Create your account" : "Welcome back"}
           </h1>
-          <p className="text-gray-500 text-center mb-8">
+          <p className="text-gray-500 text-center mb-6">
             {isSignup
               ? "Start your free trial today"
               : "Sign in to your account"}
           </p>
 
-          {/* Email Form */}
-          <form onSubmit={handleMagicLink}>
+          {/* Auth Mode Toggle */}
+          <div className="flex rounded-lg bg-gray-100 p-1 mb-6">
+            <button
+              type="button"
+              onClick={() => setAuthMode("password")}
+              className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
+                authMode === "password"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Password
+            </button>
+            <button
+              type="button"
+              onClick={() => setAuthMode("magic-link")}
+              className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
+                authMode === "magic-link"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Magic Link
+            </button>
+          </div>
+
+          {/* Form */}
+          <form
+            onSubmit={
+              authMode === "password" ? handlePasswordAuth : handleMagicLink
+            }
+          >
             <label
               htmlFor="email"
               className="block text-sm font-medium text-gray-700 mb-2"
@@ -193,6 +345,63 @@ function LoginForm() {
               required
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent mb-4"
             />
+
+            {/* Password fields (only for password mode) */}
+            {authMode === "password" && (
+              <>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Password
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  minLength={6}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent mb-4"
+                />
+
+                {/* Confirm password (only for signup) */}
+                {isSignup && (
+                  <>
+                    <label
+                      htmlFor="confirmPassword"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Confirm password
+                    </label>
+                    <input
+                      type="password"
+                      id="confirmPassword"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="••••••••"
+                      required
+                      minLength={6}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent mb-4"
+                    />
+                  </>
+                )}
+
+                {/* Forgot password link (only for login) */}
+                {!isSignup && (
+                  <div className="flex justify-end mb-4">
+                    <button
+                      type="button"
+                      onClick={handleForgotPassword}
+                      className="text-sm text-emerald-600 hover:text-emerald-700"
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
 
             {/* Discount Code Field (shown on signup) */}
             {isSignup && (
@@ -282,7 +491,13 @@ function LoginForm() {
             )}
 
             <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Sending..." : "Send Magic Link"}
+              {loading
+                ? "Please wait..."
+                : authMode === "magic-link"
+                  ? "Send Magic Link"
+                  : isSignup
+                    ? "Create Account"
+                    : "Sign In"}
             </Button>
           </form>
 
