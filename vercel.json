@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/morning-scan",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/arbitrage",
+      "schedule": "*/15 10-22 * * *"
+    },
+    {
+      "path": "/api/cron/daily-review",
+      "schedule": "0 23 * * *"
+    }
+  ]
+}
