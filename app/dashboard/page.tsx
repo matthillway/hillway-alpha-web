@@ -18,6 +18,7 @@ import {
   Clock,
   ArrowUpRight,
   ArrowDownRight,
+  Shield,
 } from "lucide-react";
 
 interface Metrics {
@@ -64,6 +65,7 @@ export default function DashboardPage() {
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [scanning, setScanning] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const fetchData = useCallback(async () => {
     setRefreshing(true);
@@ -99,6 +101,18 @@ export default function DashboardPage() {
         return;
       }
       setUser(session.user);
+
+      // Check if user is admin
+      const { data: adminData } = await supabase
+        .from("admin_users")
+        .select("role")
+        .eq("user_id", session.user.id)
+        .single();
+
+      if (adminData?.role === "super_admin" || adminData?.role === "admin") {
+        setIsAdmin(true);
+      }
+
       setLoading(false);
       fetchData();
     }
@@ -207,13 +221,25 @@ export default function DashboardPage() {
                   className={`w-5 h-5 ${refreshing ? "animate-spin" : ""}`}
                 />
               </button>
+              {isAdmin && (
+                <button
+                  onClick={() => router.push("/admin")}
+                  className="text-yellow-500 hover:text-yellow-400"
+                  aria-label="Admin panel"
+                  title="Admin Panel"
+                >
+                  <Shield className="w-5 h-5" />
+                </button>
+              )}
               <button
+                onClick={() => router.push("/notifications")}
                 className="text-gray-400 hover:text-white"
                 aria-label="Notifications"
               >
                 <Bell className="w-5 h-5" />
               </button>
               <button
+                onClick={() => router.push("/settings")}
                 className="text-gray-400 hover:text-white"
                 aria-label="Settings"
               >
