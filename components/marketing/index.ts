@@ -1,0 +1,11 @@
+export { Logo } from "./logo";
+export { Header } from "./header";
+export { Footer } from "./footer";
+export { Hero } from "./hero";
+export { Stats } from "./stats";
+export { ProblemSolution } from "./problem-solution";
+export { HowItWorks } from "./how-it-works";
+export { FeaturesGrid } from "./features-grid";
+export { Testimonials } from "./testimonials";
+export { CTASection } from "./cta-section";
+export { FAQ } from "./faq";

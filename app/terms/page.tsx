@@ -9,19 +9,19 @@ export const metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="border-b border-zinc-800">
+      <header className="border-b border-gray-200 bg-white">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500">
-              <TrendingUp className="h-5 w-5 text-black" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600">
+              <TrendingUp className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-white">TradeSmart</span>
+            <span className="text-xl font-bold text-gray-900">TradeSmart</span>
           </Link>
           <Link
             href="/"
-            className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Home
@@ -31,15 +31,17 @@ export default function TermsPage() {
 
       {/* Content */}
       <main className="mx-auto max-w-4xl px-6 py-16">
-        <h1 className="text-4xl font-bold text-white mb-4">Terms of Service</h1>
-        <p className="text-zinc-400 mb-8">Last updated: January 2025</p>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Terms of Service
+        </h1>
+        <p className="text-gray-500 mb-8">Last updated: January 2025</p>
 
-        <div className="prose prose-invert prose-zinc max-w-none space-y-8">
+        <div className="prose prose-gray max-w-none space-y-8">
           <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               1. Agreement to Terms
             </h2>
-            <p className="text-zinc-300 leading-relaxed">
+            <p className="text-gray-700 leading-relaxed">
               By accessing or using TradeSmart (&quot;the Service&quot;),
               operated by Matt Fitzgerald (&quot;we&quot;, &quot;us&quot;, or
               &quot;our&quot;), located in Sheffield, United Kingdom, you agree
@@ -49,10 +51,10 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               2. Description of Service
             </h2>
-            <p className="text-zinc-300 leading-relaxed">
+            <p className="text-gray-700 leading-relaxed">
               TradeSmart is a multi-asset opportunity scanner that provides
               information about potential opportunities in betting arbitrage,
               stock momentum, and cryptocurrency markets. The Service includes
@@ -62,14 +64,14 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               3. Eligibility
             </h2>
-            <p className="text-zinc-300 leading-relaxed mb-4">
+            <p className="text-gray-700 leading-relaxed mb-4">
               You must be at least 18 years of age to use this Service. By using
               the Service, you represent and warrant that:
             </p>
-            <ul className="list-disc list-inside text-zinc-300 space-y-2 ml-4">
+            <ul className="list-disc list-inside text-gray-700 space-y-2 ml-4">
               <li>You are at least 18 years old</li>
               <li>
                 You have the legal capacity to enter into a binding agreement
@@ -85,14 +87,14 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               4. Account Registration
             </h2>
-            <p className="text-zinc-300 leading-relaxed mb-4">
+            <p className="text-gray-700 leading-relaxed mb-4">
               To access certain features of the Service, you must create an
               account. When registering, you agree to:
             </p>
-            <ul className="list-disc list-inside text-zinc-300 space-y-2 ml-4">
+            <ul className="list-disc list-inside text-gray-700 space-y-2 ml-4">
               <li>Provide accurate, current, and complete information</li>
               <li>Maintain and promptly update your account information</li>
               <li>Keep your password confidential and secure</li>
@@ -106,37 +108,41 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               5. Subscription and Billing
             </h2>
-            <div className="text-zinc-300 leading-relaxed space-y-4">
+            <div className="text-gray-700 leading-relaxed space-y-4">
               <p>
-                <strong className="text-white">5.1 Subscription Plans:</strong>{" "}
-                The Service offers various subscription tiers (Free, Starter,
-                Pro, and Enterprise) with different features and pricing.
-                Details of each plan are available on our pricing page.
+                <strong className="text-gray-900">
+                  5.1 Subscription Plans:
+                </strong>{" "}
+                The Service offers various subscription tiers (Starter, Pro, and
+                Enterprise) with different features and pricing. Details of each
+                plan are available on our pricing page.
               </p>
               <p>
-                <strong className="text-white">5.2 Billing:</strong> Paid
+                <strong className="text-gray-900">5.2 Billing:</strong> Paid
                 subscriptions are billed in advance on a monthly basis. Your
                 subscription will automatically renew unless cancelled before
                 the renewal date.
               </p>
               <p>
-                <strong className="text-white">5.3 Payment Processing:</strong>{" "}
+                <strong className="text-gray-900">
+                  5.3 Payment Processing:
+                </strong>{" "}
                 Payments are processed securely through Stripe. By subscribing,
                 you authorize us to charge your payment method for all fees
                 associated with your subscription.
               </p>
               <p>
-                <strong className="text-white">5.4 Refunds:</strong> We offer a
-                14-day free trial on the Pro plan. After your trial period or
+                <strong className="text-gray-900">5.4 Refunds:</strong> We offer
+                a 14-day free trial on the Pro plan. After your trial period or
                 after payment, subscriptions are non-refundable. You may cancel
                 at any time, and you will retain access until the end of your
                 current billing period.
               </p>
               <p>
-                <strong className="text-white">5.5 Price Changes:</strong> We
+                <strong className="text-gray-900">5.5 Price Changes:</strong> We
                 reserve the right to modify pricing with 30 days&apos; notice.
                 Price changes will take effect at the start of your next billing
                 cycle.
@@ -145,13 +151,13 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               6. Acceptable Use
             </h2>
-            <p className="text-zinc-300 leading-relaxed mb-4">
+            <p className="text-gray-700 leading-relaxed mb-4">
               You agree not to:
             </p>
-            <ul className="list-disc list-inside text-zinc-300 space-y-2 ml-4">
+            <ul className="list-disc list-inside text-gray-700 space-y-2 ml-4">
               <li>
                 Use the Service for any illegal purpose or in violation of any
                 laws
@@ -185,10 +191,10 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               7. Intellectual Property
             </h2>
-            <p className="text-zinc-300 leading-relaxed">
+            <p className="text-gray-700 leading-relaxed">
               The Service and its original content, features, and functionality
               are owned by Matt Fitzgerald and are protected by international
               copyright, trademark, and other intellectual property laws. You
@@ -198,10 +204,10 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               8. Disclaimer of Warranties
             </h2>
-            <p className="text-zinc-300 leading-relaxed">
+            <p className="text-gray-700 leading-relaxed">
               THE SERVICE IS PROVIDED &quot;AS IS&quot; AND &quot;AS
               AVAILABLE&quot; WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR
               IMPLIED. WE DO NOT WARRANT THAT THE SERVICE WILL BE UNINTERRUPTED,
@@ -212,10 +218,10 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               9. Limitation of Liability
             </h2>
-            <p className="text-zinc-300 leading-relaxed">
+            <p className="text-gray-700 leading-relaxed">
               TO THE MAXIMUM EXTENT PERMITTED BY LAW, MATT FITZGERALD SHALL NOT
               BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR
               PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES, WHETHER
@@ -228,10 +234,10 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               10. Indemnification
             </h2>
-            <p className="text-zinc-300 leading-relaxed">
+            <p className="text-gray-700 leading-relaxed">
               You agree to indemnify and hold harmless Matt Fitzgerald from any
               claims, damages, losses, liabilities, costs, or expenses
               (including legal fees) arising from your use of the Service, your
@@ -241,10 +247,10 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               11. Termination
             </h2>
-            <p className="text-zinc-300 leading-relaxed">
+            <p className="text-gray-700 leading-relaxed">
               We may terminate or suspend your account and access to the Service
               immediately, without prior notice or liability, for any reason,
               including if you breach these Terms. Upon termination, your right
@@ -255,10 +261,10 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               12. Governing Law
             </h2>
-            <p className="text-zinc-300 leading-relaxed">
+            <p className="text-gray-700 leading-relaxed">
               These Terms shall be governed by and construed in accordance with
               the laws of England and Wales, without regard to its conflict of
               law provisions. Any disputes arising from these Terms or the
@@ -268,10 +274,10 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               13. Changes to Terms
             </h2>
-            <p className="text-zinc-300 leading-relaxed">
+            <p className="text-gray-700 leading-relaxed">
               We reserve the right to modify or replace these Terms at any time.
               If a revision is material, we will provide at least 30 days&apos;
               notice prior to any new terms taking effect. Your continued use of
@@ -281,24 +287,24 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-white mb-4">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               14. Contact Information
             </h2>
-            <p className="text-zinc-300 leading-relaxed">
+            <p className="text-gray-700 leading-relaxed">
               If you have any questions about these Terms, please contact us at:
             </p>
-            <div className="mt-4 p-4 rounded-lg bg-zinc-900 border border-zinc-800">
-              <p className="text-zinc-300">
-                <strong className="text-white">Email:</strong>{" "}
+            <div className="mt-4 p-4 rounded-lg bg-white border border-gray-200 shadow-sm">
+              <p className="text-gray-700">
+                <strong className="text-gray-900">Email:</strong>{" "}
                 <a
                   href="mailto:support@tradesmarthub.com"
-                  className="text-emerald-400 hover:text-emerald-300"
+                  className="text-emerald-600 hover:text-emerald-700"
                 >
                   support@tradesmarthub.com
                 </a>
               </p>
-              <p className="text-zinc-300 mt-2">
-                <strong className="text-white">Location:</strong> Sheffield,
+              <p className="text-gray-700 mt-2">
+                <strong className="text-gray-900">Location:</strong> Sheffield,
                 United Kingdom
               </p>
             </div>
@@ -307,30 +313,30 @@ export default function TermsPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-800 py-8">
+      <footer className="border-t border-gray-200 bg-white py-8">
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <div className="flex h-6 w-6 items-center justify-center rounded bg-emerald-500">
-                <TrendingUp className="h-4 w-4 text-black" />
+              <div className="flex h-6 w-6 items-center justify-center rounded bg-emerald-600">
+                <TrendingUp className="h-4 w-4 text-white" />
               </div>
-              <span className="text-sm text-zinc-400">
+              <span className="text-sm text-gray-500">
                 TradeSmart - Multi-Asset Opportunity Scanner
               </span>
             </div>
-            <div className="flex items-center gap-6 text-sm text-zinc-500">
-              <Link href="/terms" className="text-emerald-400">
+            <div className="flex items-center gap-6 text-sm text-gray-500">
+              <Link href="/terms" className="text-emerald-600 font-medium">
                 Terms
               </Link>
               <Link
                 href="/privacy"
-                className="hover:text-zinc-300 transition-colors"
+                className="hover:text-gray-900 transition-colors"
               >
                 Privacy
               </Link>
               <Link
                 href="/disclaimer"
-                className="hover:text-zinc-300 transition-colors"
+                className="hover:text-gray-900 transition-colors"
               >
                 Disclaimer
               </Link>
