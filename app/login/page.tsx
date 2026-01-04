@@ -26,10 +26,23 @@ function LoginForm() {
     text: string;
   } | null>(null);
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  );
+  // Safely get Supabase credentials with fallback
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
+        <div className="max-w-md w-full text-center">
+          <p className="text-red-600">
+            Configuration error. Please try again later.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
 
   // Validate discount code
   const validateDiscountCode = useCallback(
