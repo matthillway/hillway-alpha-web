@@ -1,19 +1,67 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, User, Bell, CreditCard, Shield, Mail } from "lucide-react";
+import {
+  ArrowLeft,
+  User,
+  Bell,
+  CreditCard,
+  Shield,
+  Mail,
+  MessageCircle,
+  Check,
+  AlertCircle,
+} from "lucide-react";
+
+type AlertFrequency = "realtime" | "hourly" | "daily" | "weekly";
+
+type NotificationPreferences = {
+  email_alerts_enabled: boolean;
+  whatsapp_alerts_enabled: boolean;
+  alert_frequency: AlertFrequency;
+  whatsapp_number: string | null;
+};
 
 export default function SettingsPage() {
   const router = useRouter();
   const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [subscription, setSubscription] = useState<{
     tier: string;
     status: string;
   } | null>(null);
+
+  // Notification preferences state
+  const [emailAlerts, setEmailAlerts] = useState(true);
+  const [whatsappAlerts, setWhatsappAlerts] = useState(false);
+  const [alertFrequency, setAlertFrequency] =
+    useState<AlertFrequency>("realtime");
+  const [whatsappNumber, setWhatsappNumber] = useState("");
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+
+  const canUseWhatsApp =
+    subscription?.tier === "pro" || subscription?.tier === "enterprise";
+
+  const fetchNotificationPreferences = useCallback(async () => {
+    try {
+      const response = await fetch("/api/settings/notifications");
+      if (response.ok) {
+        const prefs: NotificationPreferences = await response.json();
+        setEmailAlerts(prefs.email_alerts_enabled);
+        setWhatsappAlerts(prefs.whatsapp_alerts_enabled);
+        setAlertFrequency(prefs.alert_frequency);
+        setWhatsappNumber(prefs.whatsapp_number || "");
+      }
+    } catch (error) {
+      console.error("Error fetching notification preferences:", error);
+    }
+  }, []);
 
   useEffect(() => {
     async function init() {
@@ -44,6 +92,69 @@ export default function SettingsPage() {
     }
     init();
   }, [router]);
+
+  // Fetch notification preferences after initial load
+  useEffect(() => {
+    if (!loading && user) {
+      fetchNotificationPreferences();
+    }
+  }, [loading, user, fetchNotificationPreferences]);
+
+  const validatePhoneNumber = (phone: string): boolean => {
+    if (!phone) return true; // Empty is valid (optional)
+    const phoneRegex = /^\+[1-9]\d{6,14}$/;
+    return phoneRegex.test(phone);
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setWhatsappNumber(value);
+    if (value && !validatePhoneNumber(value)) {
+      setPhoneError("Please use international format (e.g., +447123456789)");
+    } else {
+      setPhoneError(null);
+    }
+  };
+
+  const saveNotificationPreferences = async () => {
+    if (whatsappNumber && !validatePhoneNumber(whatsappNumber)) {
+      setPhoneError("Please use international format (e.g., +447123456789)");
+      return;
+    }
+
+    setSaving(true);
+    setSaveSuccess(false);
+    setSaveError(null);
+
+    try {
+      const response = await fetch("/api/settings/notifications", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email_alerts_enabled: emailAlerts,
+          whatsapp_alerts_enabled: whatsappAlerts,
+          alert_frequency: alertFrequency,
+          whatsapp_number: whatsappNumber || null,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setSaveError(data.error || "Failed to save preferences");
+        return;
+      }
+
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (error) {
+      console.error("Error saving preferences:", error);
+      setSaveError("Failed to save preferences. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -136,35 +247,165 @@ export default function SettingsPage() {
         {/* Notifications Section */}
         <div className="bg-gray-900 rounded-xl border border-gray-800 mb-6">
           <div className="px-6 py-4 border-b border-gray-800">
-            <div className="flex items-center space-x-3">
-              <Bell className="w-5 h-5 text-purple-500" />
-              <h2 className="text-lg font-semibold text-white">
-                Notifications
-              </h2>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Bell className="w-5 h-5 text-purple-500" />
+                <h2 className="text-lg font-semibold text-white">
+                  Notifications
+                </h2>
+              </div>
+              {saveSuccess && (
+                <div className="flex items-center text-green-500 text-sm">
+                  <Check className="w-4 h-4 mr-1" />
+                  Saved
+                </div>
+              )}
+              {saveError && (
+                <div className="flex items-center text-red-500 text-sm">
+                  <AlertCircle className="w-4 h-4 mr-1" />
+                  {saveError}
+                </div>
+              )}
             </div>
           </div>
-          <div className="p-6 space-y-4">
+          <div className="p-6 space-y-6">
+            {/* Email Alerts Toggle */}
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white">Email Alerts</p>
-                <p className="text-gray-400 text-sm">
+                <div className="flex items-center space-x-2">
+                  <Mail className="w-4 h-4 text-gray-400" />
+                  <p className="text-white">Email Alerts</p>
+                </div>
+                <p className="text-gray-400 text-sm mt-1">
                   Receive opportunity alerts via email
                 </p>
               </div>
-              <button className="w-12 h-6 bg-blue-500 rounded-full relative">
-                <span className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></span>
+              <button
+                onClick={() => setEmailAlerts(!emailAlerts)}
+                className={`w-12 h-6 rounded-full relative transition-colors duration-200 ${
+                  emailAlerts ? "bg-blue-500" : "bg-gray-700"
+                }`}
+              >
+                <span
+                  className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-200 ${
+                    emailAlerts ? "right-1" : "left-1"
+                  }`}
+                />
               </button>
             </div>
+
+            {/* WhatsApp Alerts Toggle */}
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white">WhatsApp Alerts</p>
-                <p className="text-gray-400 text-sm">
-                  Receive alerts on WhatsApp (Pro+)
+                <div className="flex items-center space-x-2">
+                  <MessageCircle className="w-4 h-4 text-gray-400" />
+                  <p className="text-white">WhatsApp Alerts</p>
+                  {!canUseWhatsApp && (
+                    <span className="px-2 py-0.5 text-xs bg-purple-500/20 text-purple-400 rounded-full">
+                      Pro+
+                    </span>
+                  )}
+                </div>
+                <p className="text-gray-400 text-sm mt-1">
+                  Receive alerts on WhatsApp{" "}
+                  {!canUseWhatsApp && "(requires Pro subscription)"}
                 </p>
               </div>
-              <button className="w-12 h-6 bg-gray-700 rounded-full relative">
-                <span className="absolute left-1 top-1 w-4 h-4 bg-gray-400 rounded-full"></span>
+              <button
+                onClick={() =>
+                  canUseWhatsApp && setWhatsappAlerts(!whatsappAlerts)
+                }
+                disabled={!canUseWhatsApp}
+                className={`w-12 h-6 rounded-full relative transition-colors duration-200 ${
+                  whatsappAlerts && canUseWhatsApp
+                    ? "bg-green-500"
+                    : "bg-gray-700"
+                } ${!canUseWhatsApp ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
+                <span
+                  className={`absolute top-1 w-4 h-4 rounded-full transition-all duration-200 ${
+                    whatsappAlerts && canUseWhatsApp
+                      ? "right-1 bg-white"
+                      : "left-1 bg-gray-400"
+                  }`}
+                />
               </button>
+            </div>
+
+            {/* WhatsApp Number Input */}
+            {whatsappAlerts && canUseWhatsApp && (
+              <div className="pl-6 border-l-2 border-gray-700">
+                <label className="block text-sm text-gray-400 mb-2">
+                  WhatsApp Number
+                </label>
+                <input
+                  type="tel"
+                  value={whatsappNumber}
+                  onChange={(e) => handlePhoneChange(e.target.value)}
+                  placeholder="+447123456789"
+                  className={`w-full sm:w-80 px-4 py-2 bg-gray-800 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 ${
+                    phoneError ? "border-red-500" : "border-gray-700"
+                  }`}
+                />
+                {phoneError && (
+                  <p className="text-red-500 text-sm mt-1">{phoneError}</p>
+                )}
+                <p className="text-gray-500 text-xs mt-2">
+                  Use international format with country code
+                </p>
+              </div>
+            )}
+
+            {/* Alert Frequency */}
+            <div>
+              <label className="block text-sm text-gray-400 mb-2">
+                Alert Frequency
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {[
+                  { value: "realtime", label: "Real-time" },
+                  { value: "hourly", label: "Hourly" },
+                  { value: "daily", label: "Daily Summary" },
+                  { value: "weekly", label: "Weekly Summary" },
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() =>
+                      setAlertFrequency(option.value as AlertFrequency)
+                    }
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      alertFrequency === option.value
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+              <p className="text-gray-500 text-xs mt-2">
+                {alertFrequency === "realtime" &&
+                  "Get notified immediately when opportunities are found"}
+                {alertFrequency === "hourly" &&
+                  "Receive a summary of opportunities every hour"}
+                {alertFrequency === "daily" &&
+                  "Receive a daily digest of all opportunities"}
+                {alertFrequency === "weekly" &&
+                  "Receive a weekly summary of the best opportunities"}
+              </p>
+            </div>
+
+            {/* Save Button */}
+            <div className="pt-4 border-t border-gray-800">
+              <Button
+                variant="primary"
+                onClick={saveNotificationPreferences}
+                disabled={saving || !!phoneError}
+                loading={saving}
+                className="w-full sm:w-auto"
+              >
+                Save Notification Preferences
+              </Button>
             </div>
           </div>
         </div>
