@@ -21,6 +21,7 @@ import {
   ArrowDownRight,
   Shield,
   BookOpen,
+  PieChart,
 } from "lucide-react";
 
 interface Metrics {
@@ -243,6 +244,14 @@ export default function DashboardPage() {
                 <RefreshCw
                   className={`w-5 h-5 ${refreshing ? "animate-spin" : ""}`}
                 />
+              </button>
+              <button
+                onClick={() => router.push("/portfolio")}
+                className="text-gray-400 hover:text-white"
+                aria-label="Portfolio"
+                title="Portfolio & P&L"
+              >
+                <PieChart className="w-5 h-5" />
               </button>
               <button
                 onClick={() => router.push("/guides")}
