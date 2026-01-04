@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     const { code, user_id, tier } = body as {
       code: string;
       user_id: string;
-      tier?: "starter" | "pro" | "enterprise";
+      tier?: "starter" | "pro" | "unlimited";
     };
 
     if (!code || !user_id) {

@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { code, tier } = body as {
       code: string;
-      tier?: "starter" | "pro" | "enterprise";
+      tier?: "starter" | "pro" | "unlimited";
     };
 
     if (!code) {

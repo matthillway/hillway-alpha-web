@@ -8,6 +8,15 @@ import { createFundingRateScanner } from "@/lib/scanners/crypto/funding-rates";
 // Arbitrage scanner requires ODDS_API_KEY
 import { createArbitrageScanner } from "@/lib/scanners/betting/arbitrage";
 import { createOddsApiClient } from "@/lib/scanner-api/odds-api";
+// Real-time email alerts
+import {
+  sendOpportunityAlertBatch,
+  getUsersForRealtimeAlerts,
+  type Opportunity as NotificationOpportunity,
+} from "@/lib/email/send-notification";
+
+// Minimum confidence to trigger realtime email alerts (70%+)
+const MIN_CONFIDENCE_FOR_ALERTS = 70;
 
 // Create Supabase client with service role for inserts
 function getSupabaseClient() {
@@ -22,8 +31,8 @@ function getSupabaseClient() {
 const TIER_LIMITS: Record<string, number> = {
   free: 0, // No scans for free users
   starter: 100, // 100 scans per day
-  pro: 1000, // 1000 scans per day
-  enterprise: -1, // Unlimited
+  pro: 500, // 500 scans per day
+  unlimited: -1, // Unlimited
 };
 
 interface DbOpportunity {
@@ -77,7 +86,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check usage for the day (if not enterprise)
+    // Check usage for the day (if not unlimited)
     if (dailyLimit !== -1 && userId) {
       const today = new Date().toISOString().split("T")[0];
 
@@ -278,6 +287,50 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Send real-time email alerts for high-confidence opportunities
+    let alertsSent = 0;
+    if (opportunities.length > 0) {
+      try {
+        // Filter for high-confidence opportunities (70%+)
+        const highConfidenceOpps = opportunities.filter(
+          (opp) => opp.confidence_score >= MIN_CONFIDENCE_FOR_ALERTS,
+        );
+
+        if (highConfidenceOpps.length > 0) {
+          // Get users who want realtime alerts
+          const userIds = await getUsersForRealtimeAlerts();
+
+          if (userIds.length > 0) {
+            // Convert to email opportunity format and send alerts
+            for (const opp of highConfidenceOpps) {
+              const notificationOpp: NotificationOpportunity = {
+                id: opp.id,
+                category: opp.category as "arbitrage" | "stock" | "crypto",
+                subcategory: opp.subcategory,
+                title: opp.title,
+                description: opp.description,
+                confidence_score: opp.confidence_score,
+                expected_value: opp.expected_value,
+                expires_at: opp.expires_at,
+                data: opp.data,
+                status: opp.status,
+                user_id: opp.user_id,
+              };
+
+              const results = await sendOpportunityAlertBatch(
+                userIds,
+                notificationOpp,
+              );
+              alertsSent += results.filter((r) => r.success).length;
+            }
+          }
+        }
+      } catch (alertError) {
+        console.error("Error sending realtime alerts:", alertError);
+        // Don't add to errors array - alerts failing shouldn't fail the scan
+      }
+    }
+
     // Return results
     return NextResponse.json({
       success: true,
@@ -285,10 +338,11 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
       opportunities,
       count: opportunities.length,
+      alertsSent,
       errors: errors.length > 0 ? errors : undefined,
       message:
         opportunities.length > 0
-          ? `Found ${opportunities.length} opportunities`
+          ? `Found ${opportunities.length} opportunities${alertsSent > 0 ? `, sent ${alertsSent} alerts` : ""}`
           : errors.length > 0
             ? `Scan completed with errors: ${errors.join("; ")}`
             : "No opportunities found",

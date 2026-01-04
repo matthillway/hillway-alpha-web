@@ -1,64 +1,68 @@
-import Stripe from 'stripe';
+import Stripe from "stripe";
 
 // Create stripe instance - will use placeholder at build time if env var not set
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder', {
-  typescript: true,
-});
+export const stripe = new Stripe(
+  process.env.STRIPE_SECRET_KEY || "sk_test_placeholder",
+  {
+    typescript: true,
+  },
+);
 
+// TODO: Update these Stripe price IDs after creating new prices in Stripe Dashboard
+// Matt needs to create new prices in Stripe and update .env.local with:
+// STRIPE_PRICE_STARTER=price_xxx
+// STRIPE_PRICE_PRO=price_xxx
+// STRIPE_PRICE_UNLIMITED=price_xxx
 export const PRICING_TIERS = {
   starter: {
-    name: 'Starter',
-    price: 19,
-    priceId: '', // Will be created in Stripe
+    name: "Starter",
+    price: 29,
+    priceId: process.env.STRIPE_PRICE_STARTER || "", // TODO: Set in .env.local after creating price in Stripe
     features: [
-      'Betting arbitrage scanner',
-      '3 sports leagues',
-      'Daily briefings',
-      'Email alerts',
-      '100 scans/day',
+      "100 scans per day",
+      "Betting scanner only",
+      "Email alerts",
+      "Daily AI briefings",
     ],
     limits: {
       scansPerDay: 100,
-      sports: 3,
-      assetClasses: ['betting'],
+      sports: "all",
+      assetClasses: ["betting"],
     },
   },
   pro: {
-    name: 'Pro',
-    price: 49,
-    priceId: '', // Will be created in Stripe
+    name: "Pro",
+    price: 79,
+    priceId: process.env.STRIPE_PRICE_PRO || "", // TODO: Set in .env.local after creating price in Stripe
+    popular: true,
     features: [
-      'Everything in Starter',
-      'All sports leagues',
-      'Stock momentum scanner',
-      'Crypto funding rates',
-      'Real-time WhatsApp alerts',
-      'AI-powered insights',
-      '1,000 scans/day',
+      "500 scans per day",
+      "All 3 scanners (Betting, Stocks, Crypto)",
+      "WhatsApp + Email alerts",
+      "AI-powered insights",
+      "Priority support",
     ],
     limits: {
-      scansPerDay: 1000,
-      sports: 'unlimited',
-      assetClasses: ['betting', 'stocks', 'crypto'],
+      scansPerDay: 500,
+      sports: "unlimited",
+      assetClasses: ["betting", "stocks", "crypto"],
     },
   },
-  enterprise: {
-    name: 'Enterprise',
-    price: 149,
-    priceId: '', // Will be created in Stripe
+  unlimited: {
+    name: "Unlimited",
+    price: 199,
+    priceId: process.env.STRIPE_PRICE_UNLIMITED || "", // TODO: Set in .env.local after creating price in Stripe
     features: [
-      'Everything in Pro',
-      'Unlimited scans',
-      'Custom alert rules',
-      'API access',
-      'Priority support',
-      'White-label option',
-      'Custom integrations',
+      "Unlimited scans",
+      "Full API access",
+      "Account linking",
+      "White-label option",
+      "Dedicated support",
     ],
     limits: {
-      scansPerDay: 'unlimited',
-      sports: 'unlimited',
-      assetClasses: ['betting', 'stocks', 'crypto'],
+      scansPerDay: "unlimited",
+      sports: "unlimited",
+      assetClasses: ["betting", "stocks", "crypto"],
     },
   },
 } as const;

@@ -6,7 +6,7 @@ export interface UserProfile {
   id: string;
   email: string;
   role: UserRole;
-  subscription_tier: "free" | "starter" | "pro" | "enterprise";
+  subscription_tier: "free" | "starter" | "pro" | "unlimited";
   stripe_customer_id?: string;
   created_at: string;
   updated_at?: string;
@@ -112,7 +112,7 @@ export async function getAdminStats() {
     free: 0,
     starter: 0,
     pro: 0,
-    enterprise: 0,
+    unlimited: 0,
   };
 
   subscriptionData?.forEach((user) => {
@@ -125,15 +125,15 @@ export async function getAdminStats() {
   // Calculate ARR (Annual Recurring Revenue)
   const pricing = {
     free: 0,
-    starter: 19,
-    pro: 49,
-    enterprise: 149,
+    starter: 29,
+    pro: 79,
+    unlimited: 199,
   };
 
   const monthlyRevenue =
     subscriptionBreakdown.starter * pricing.starter +
     subscriptionBreakdown.pro * pricing.pro +
-    subscriptionBreakdown.enterprise * pricing.enterprise;
+    subscriptionBreakdown.unlimited * pricing.unlimited;
 
   const arr = monthlyRevenue * 12;
 

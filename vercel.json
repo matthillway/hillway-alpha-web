@@ -11,6 +11,18 @@
     {
       "path": "/api/cron/daily-review",
       "schedule": "0 23 * * *"
+    },
+    {
+      "path": "/api/cron/sync-platforms",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/send-notifications?type=daily",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/send-notifications?type=weekly",
+      "schedule": "0 9 * * 1"
     }
   ]
 }

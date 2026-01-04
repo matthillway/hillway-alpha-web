@@ -22,6 +22,8 @@ import {
   CheckCircle,
   XCircle,
   RefreshCw,
+  Link2,
+  ChevronRight,
 } from "lucide-react";
 import {
   LineChart,
@@ -84,6 +86,14 @@ interface PnlByCategory {
   [key: string]: { pnl: number; count: number };
 }
 
+interface LinkedAccount {
+  id: string;
+  platform: "betfair" | "ibkr" | "kraken";
+  is_active: boolean;
+  last_sync_at: string | null;
+  sync_error: string | null;
+}
+
 type TimeRange = "daily" | "weekly" | "monthly";
 
 export default function PortfolioPage() {
@@ -98,6 +108,7 @@ export default function PortfolioPage() {
   const [pnlByCategory, setPnlByCategory] = useState<PnlByCategory>({});
   const [recentTrades, setRecentTrades] = useState<Trade[]>([]);
   const [timeRange, setTimeRange] = useState<TimeRange>("daily");
+  const [linkedAccounts, setLinkedAccounts] = useState<LinkedAccount[]>([]);
 
   // Modal states
   const [showSetupModal, setShowSetupModal] = useState(false);
@@ -162,6 +173,11 @@ export default function PortfolioPage() {
   useEffect(() => {
     if (user?.id) {
       fetchData();
+      // Fetch linked accounts
+      fetch("/api/platforms/linked")
+        .then((res) => res.json())
+        .then((data) => setLinkedAccounts(data.accounts || []))
+        .catch((err) => console.error("Error fetching linked accounts:", err));
     }
   }, [user?.id, fetchData]);
 
@@ -560,6 +576,89 @@ export default function PortfolioPage() {
                 <p className="text-sm">
                   Close some trades to see your P&L over time.
                 </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Linked Accounts Section */}
+        <div className="bg-gray-900 rounded-xl border border-gray-800 mb-8">
+          <div className="px-6 py-4 border-b border-gray-800 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Link2 className="w-5 h-5 text-blue-500" />
+              <h2 className="text-lg font-semibold text-white">
+                Linked Accounts
+              </h2>
+            </div>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => router.push("/settings/linked-accounts")}
+            >
+              Manage
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+          <div className="p-6">
+            {linkedAccounts.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {linkedAccounts.map((account) => (
+                  <div
+                    key={account.id}
+                    className="p-4 bg-gray-800/50 rounded-lg flex items-center justify-between"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          account.platform === "betfair"
+                            ? "bg-yellow-500/20"
+                            : account.platform === "ibkr"
+                              ? "bg-red-500/20"
+                              : "bg-purple-500/20"
+                        }`}
+                      >
+                        {account.platform === "betfair" && (
+                          <Activity className="w-5 h-5 text-yellow-500" />
+                        )}
+                        {account.platform === "ibkr" && (
+                          <BarChart3 className="w-5 h-5 text-red-500" />
+                        )}
+                        {account.platform === "kraken" && (
+                          <Bitcoin className="w-5 h-5 text-purple-500" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-white font-medium capitalize">
+                          {account.platform}
+                        </p>
+                        <p className="text-gray-500 text-xs">
+                          {account.last_sync_at
+                            ? `Synced ${new Date(account.last_sync_at).toLocaleDateString()}`
+                            : "Not synced"}
+                        </p>
+                      </div>
+                    </div>
+                    {account.is_active ? (
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                    ) : (
+                      <XCircle className="w-5 h-5 text-red-500" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6">
+                <Link2 className="w-12 h-12 mx-auto mb-4 text-gray-600" />
+                <p className="text-gray-400 mb-4">
+                  Connect your trading accounts for automatic P&L tracking
+                </p>
+                <Button
+                  variant="primary"
+                  onClick={() => router.push("/settings/linked-accounts")}
+                >
+                  <Link2 className="w-4 h-4 mr-2" />
+                  Link Accounts
+                </Button>
               </div>
             )}
           </div>

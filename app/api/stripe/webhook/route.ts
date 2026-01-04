@@ -17,11 +17,15 @@ function getSupabaseAdmin() {
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
 
 // Map Stripe price IDs to subscription tiers
-function getTierFromPriceId(priceId: string): "starter" | "pro" | "enterprise" {
-  const priceTierMap: Record<string, "starter" | "pro" | "enterprise"> = {
-    [process.env.STRIPE_STARTER_PRICE_ID!]: "starter",
-    [process.env.STRIPE_PRO_PRICE_ID!]: "pro",
-    [process.env.STRIPE_ENTERPRISE_PRICE_ID!]: "enterprise",
+// TODO: Update env vars after creating new prices in Stripe Dashboard:
+// STRIPE_PRICE_STARTER, STRIPE_PRICE_PRO, STRIPE_PRICE_UNLIMITED
+function getTierFromPriceId(priceId: string): "starter" | "pro" | "unlimited" {
+  const priceTierMap: Record<string, "starter" | "pro" | "unlimited"> = {
+    [process.env.STRIPE_STARTER_PRICE_ID || process.env.STRIPE_PRICE_STARTER!]:
+      "starter",
+    [process.env.STRIPE_PRO_PRICE_ID || process.env.STRIPE_PRICE_PRO!]: "pro",
+    [process.env.STRIPE_UNLIMITED_PRICE_ID ||
+    process.env.STRIPE_PRICE_UNLIMITED!]: "unlimited",
   };
   return priceTierMap[priceId] || "starter";
 }

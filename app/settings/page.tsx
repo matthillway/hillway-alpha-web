@@ -14,6 +14,8 @@ import {
   MessageCircle,
   Check,
   AlertCircle,
+  Link2,
+  ChevronRight,
 } from "lucide-react";
 
 type AlertFrequency = "realtime" | "hourly" | "daily" | "weekly";
@@ -46,7 +48,7 @@ export default function SettingsPage() {
   const [phoneError, setPhoneError] = useState<string | null>(null);
 
   const canUseWhatsApp =
-    subscription?.tier === "pro" || subscription?.tier === "enterprise";
+    subscription?.tier === "pro" || subscription?.tier === "unlimited";
 
   const fetchNotificationPreferences = useCallback(async () => {
     try {
@@ -202,6 +204,27 @@ export default function SettingsPage() {
               <p className="text-gray-500 text-sm font-mono">{user?.id}</p>
             </div>
           </div>
+        </div>
+
+        {/* Linked Accounts Section */}
+        <div className="bg-gray-900 rounded-xl border border-gray-800 mb-6">
+          <button
+            onClick={() => router.push("/settings/linked-accounts")}
+            className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-800/50 transition-colors"
+          >
+            <div className="flex items-center space-x-3">
+              <Link2 className="w-5 h-5 text-blue-500" />
+              <div className="text-left">
+                <h2 className="text-lg font-semibold text-white">
+                  Linked Accounts
+                </h2>
+                <p className="text-gray-400 text-sm">
+                  Connect Betfair, IBKR, and Kraken
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-gray-400" />
+          </button>
         </div>
 
         {/* Subscription Section */}

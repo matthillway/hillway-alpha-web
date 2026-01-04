@@ -11,7 +11,7 @@ export const supabase = createBrowserClient(
 export type User = {
   id: string;
   email: string;
-  subscription_tier: "free" | "starter" | "pro" | "enterprise";
+  subscription_tier: "free" | "starter" | "pro" | "unlimited";
   stripe_customer_id?: string;
   created_at: string;
 };

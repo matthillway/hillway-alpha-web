@@ -24,7 +24,31 @@ import {
   ArrowUpDown,
   Clock,
   Wallet,
+  Zap,
+  Globe,
+  Lock,
 } from "lucide-react";
+
+// =============================================================================
+// AFFILIATE PARTNER URLS - Update these with your affiliate links
+// =============================================================================
+
+// Betting Partners (UK Regulated)
+const BETFAIR_AFFILIATE_URL = "#"; // TODO: Add Betfair affiliate link
+const SMARKETS_AFFILIATE_URL = "#"; // TODO: Add Smarkets affiliate link
+const MATCHBOOK_AFFILIATE_URL = "#"; // TODO: Add Matchbook affiliate link
+
+// Stock Brokers (FCA Regulated)
+const IBKR_AFFILIATE_URL = "#"; // TODO: Add Interactive Brokers affiliate link
+const TRADING212_AFFILIATE_URL = "#"; // TODO: Add Trading 212 affiliate link
+const IG_AFFILIATE_URL = "#"; // TODO: Add IG affiliate link
+
+// Crypto Exchanges (UK Compliant)
+const KRAKEN_AFFILIATE_URL = "#"; // TODO: Add Kraken affiliate link
+const COINBASE_AFFILIATE_URL = "#"; // TODO: Add Coinbase affiliate link
+const OKX_AFFILIATE_URL = "#"; // TODO: Add OKX affiliate link
+
+// =============================================================================
 
 interface GuideSection {
   id: string;
@@ -772,107 +796,148 @@ function CryptoContent() {
 
 // Partners Content
 function PartnersContent() {
-  const partners = {
-    bookmakers: [
-      {
-        name: "Bet365",
-        description:
-          "Largest online bookmaker with wide coverage and competitive odds.",
-        features: ["Live streaming", "Cash out", "Wide market coverage"],
-        url: "#", // TODO: Add affiliate link
-      },
-      {
-        name: "Betfair Exchange",
-        description:
-          "Peer-to-peer betting exchange with typically better odds than traditional bookmakers.",
-        features: ["Lay betting", "Better odds", "Trading features"],
-        url: "#", // TODO: Add affiliate link
-      },
-      {
-        name: "Pinnacle",
-        description:
-          "Professional-friendly bookmaker with highest limits and doesn't restrict winners.",
-        features: ["High limits", "No restrictions", "Best margins"],
-        url: "#", // TODO: Add affiliate link
-      },
-      {
-        name: "William Hill",
-        description: "Established UK bookmaker with good sign-up offers.",
-        features: ["Sign-up bonus", "Good odds", "Mobile app"],
-        url: "#", // TODO: Add affiliate link
-      },
-    ],
-    brokers: [
-      {
-        name: "Interactive Brokers",
-        description:
-          "Professional-grade platform with lowest commissions for active traders.",
-        features: ["Low fees", "Global markets", "Advanced tools"],
-        url: "#", // TODO: Add affiliate link
-      },
-      {
-        name: "Trading 212",
-        description:
-          "Commission-free trading for stocks and ETFs. Great for beginners.",
-        features: ["Zero commission", "ISA available", "Fractional shares"],
-        url: "#", // TODO: Add affiliate link
-      },
-      {
-        name: "IG",
-        description:
-          "Spread betting and CFD provider with excellent charting tools.",
-        features: ["Spread betting", "Tax benefits", "Good education"],
-        url: "#", // TODO: Add affiliate link
-      },
-    ],
-    exchanges: [
-      {
-        name: "Binance",
-        description:
-          "World's largest crypto exchange with lowest fees and deepest liquidity.",
-        features: ["Lowest fees", "Most pairs", "Advanced features"],
-        url: "#", // TODO: Add affiliate link
-      },
-      {
-        name: "Bybit",
-        description:
-          "Popular derivatives exchange with good perpetual contracts.",
-        features: ["High leverage", "Good UI", "Trading bonuses"],
-        url: "#", // TODO: Add affiliate link
-      },
-      {
-        name: "OKX",
-        description:
-          "Comprehensive exchange with spot, futures, and DeFi features.",
-        features: ["Diverse products", "Good liquidity", "Earn features"],
-        url: "#", // TODO: Add affiliate link
-      },
-      {
-        name: "Kraken",
-        description:
-          "Established US-friendly exchange with strong security track record.",
-        features: ["High security", "Fiat support", "Good reputation"],
-        url: "#", // TODO: Add affiliate link
-      },
-    ],
-  };
+  const bettingPartners = [
+    {
+      name: "Betfair Exchange",
+      tagline: "Best for arbitrage, 2% commission, full API",
+      icon: <Zap className="w-6 h-6" />,
+      iconBg: "bg-blue-500",
+      benefits: [
+        "Largest liquidity pool for exchange betting",
+        "Full API access for automated trading",
+        "Lay betting enables true arbitrage",
+      ],
+      url: BETFAIR_AFFILIATE_URL,
+    },
+    {
+      name: "Smarkets",
+      tagline: "Lowest commission (2%), beginner friendly",
+      icon: <Target className="w-6 h-6" />,
+      iconBg: "bg-purple-500",
+      benefits: [
+        "Industry-lowest 2% commission rate",
+        "Clean, intuitive interface for beginners",
+        "Strong mobile app for on-the-go betting",
+      ],
+      url: SMARKETS_AFFILIATE_URL,
+    },
+    {
+      name: "Matchbook",
+      tagline: "0% commission on selected events",
+      icon: <DollarSign className="w-6 h-6" />,
+      iconBg: "bg-green-500",
+      benefits: [
+        "Zero commission promotions on major events",
+        "No premium charge (unlike Betfair)",
+        "Competitive odds across all markets",
+      ],
+      url: MATCHBOOK_AFFILIATE_URL,
+    },
+  ];
+
+  const stockBrokers = [
+    {
+      name: "Interactive Brokers",
+      tagline: "Best for serious traders, full API",
+      icon: <Globe className="w-6 h-6" />,
+      iconBg: "bg-red-500",
+      benefits: [
+        "Professional-grade trading tools",
+        "Access to 150+ global markets",
+        "Powerful API for algorithmic trading",
+      ],
+      url: IBKR_AFFILIATE_URL,
+    },
+    {
+      name: "Trading 212",
+      tagline: "Commission-free, beginner friendly",
+      icon: <Wallet className="w-6 h-6" />,
+      iconBg: "bg-emerald-500",
+      benefits: [
+        "Zero commission on all trades",
+        "Fractional shares from £1",
+        "Tax-free ISA account available",
+      ],
+      url: TRADING212_AFFILIATE_URL,
+    },
+    {
+      name: "IG",
+      tagline: "Spread betting and CFDs",
+      icon: <BarChart3 className="w-6 h-6" />,
+      iconBg: "bg-pink-500",
+      benefits: [
+        "Tax-free spread betting (UK residents)",
+        "Excellent charting and analysis tools",
+        "17,000+ markets available",
+      ],
+      url: IG_AFFILIATE_URL,
+    },
+  ];
+
+  const cryptoExchanges = [
+    {
+      name: "Kraken",
+      tagline: "Best for UK users, FCA registered",
+      icon: <Lock className="w-6 h-6" />,
+      iconBg: "bg-indigo-500",
+      benefits: [
+        "FCA registered for UK compliance",
+        "Excellent API for automated trading",
+        "Strong security track record since 2011",
+      ],
+      url: KRAKEN_AFFILIATE_URL,
+    },
+    {
+      name: "Coinbase",
+      tagline: "Most trusted, easy to use",
+      icon: <Shield className="w-6 h-6" />,
+      iconBg: "bg-blue-600",
+      benefits: [
+        "Insurance coverage on holdings",
+        "Beginner-friendly interface",
+        "Publicly traded company (NASDAQ: COIN)",
+      ],
+      url: COINBASE_AFFILIATE_URL,
+    },
+    {
+      name: "OKX",
+      tagline: "Best for funding rate arbitrage",
+      icon: <Bitcoin className="w-6 h-6" />,
+      iconBg: "bg-orange-500",
+      benefits: [
+        "Low fees for perpetual futures",
+        "Deep liquidity for large positions",
+        "Advanced funding rate tools",
+      ],
+      url: OKX_AFFILIATE_URL,
+    },
+  ];
 
   return (
     <div className="pt-6 space-y-8">
       <p className="text-gray-300">
         To act on the opportunities we find, you&apos;ll need accounts with
-        various platforms. Here are our recommended partners for each
-        opportunity type.
+        regulated platforms. Here are our recommended partners for each
+        opportunity type - all are UK regulated and trusted.
       </p>
 
-      {/* Bookmakers */}
+      {/* Betting Partners */}
       <div>
-        <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-          <TrendingUp className="w-5 h-5 text-blue-500 mr-2" />
-          Recommended Bookmakers (Arbitrage)
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {partners.bookmakers.map((partner) => (
+        <div className="flex items-center space-x-2 mb-4">
+          <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+            <TrendingUp className="w-4 h-4 text-blue-500" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white">
+              Betting Partners
+            </h3>
+            <p className="text-gray-500 text-sm">
+              UK Gambling Commission Regulated
+            </p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {bettingPartners.map((partner) => (
             <PartnerCard key={partner.name} partner={partner} />
           ))}
         </div>
@@ -880,12 +945,17 @@ function PartnersContent() {
 
       {/* Stock Brokers */}
       <div>
-        <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-          <BarChart3 className="w-5 h-5 text-green-500 mr-2" />
-          Recommended Brokers (Stocks)
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {partners.brokers.map((partner) => (
+        <div className="flex items-center space-x-2 mb-4">
+          <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
+            <BarChart3 className="w-4 h-4 text-green-500" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white">Stock Brokers</h3>
+            <p className="text-gray-500 text-sm">FCA Regulated</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {stockBrokers.map((partner) => (
             <PartnerCard key={partner.name} partner={partner} />
           ))}
         </div>
@@ -893,30 +963,35 @@ function PartnersContent() {
 
       {/* Crypto Exchanges */}
       <div>
-        <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-          <Bitcoin className="w-5 h-5 text-orange-500 mr-2" />
-          Recommended Exchanges (Crypto)
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {partners.exchanges.map((partner) => (
+        <div className="flex items-center space-x-2 mb-4">
+          <div className="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center">
+            <Bitcoin className="w-4 h-4 text-orange-500" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white">
+              Crypto Exchanges
+            </h3>
+            <p className="text-gray-500 text-sm">UK Compliant</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {cryptoExchanges.map((partner) => (
             <PartnerCard key={partner.name} partner={partner} />
           ))}
         </div>
       </div>
 
       {/* Affiliate Disclosure */}
-      <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
-        <div className="flex items-start space-x-3">
-          <Wallet className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
-          <div>
-            <h4 className="text-gray-300 font-medium">Affiliate Disclosure</h4>
-            <p className="text-gray-500 text-sm mt-1">
-              Some links on this page may be affiliate links. If you sign up
-              through these links, we may receive a commission at no extra cost
-              to you. This helps support our free tools and content.
-            </p>
-          </div>
-        </div>
+      <div className="bg-gray-800/30 border border-gray-700/50 rounded-lg p-4 mt-8">
+        <p className="text-gray-500 text-xs text-center">
+          <span className="font-medium text-gray-400">
+            Affiliate Disclosure:
+          </span>{" "}
+          Some links on this page are affiliate links. If you sign up through
+          these links, we may receive a commission at no extra cost to you. This
+          helps support our free tools and content. We only recommend platforms
+          we trust and use ourselves.
+        </p>
       </div>
     </div>
   );
@@ -928,43 +1003,47 @@ function PartnerCard({
 }: {
   partner: {
     name: string;
-    description: string;
-    features: string[];
+    tagline: string;
+    icon: React.ReactNode;
+    iconBg: string;
+    benefits: string[];
     url: string;
   };
 }) {
   return (
-    <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700 hover:border-gray-600 transition-colors">
-      <div className="flex items-start justify-between mb-2">
-        <h4 className="text-white font-semibold">{partner.name}</h4>
-        <a
-          href={partner.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-500 hover:text-blue-400"
+    <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700 hover:border-gray-600 transition-all hover:bg-gray-800/70 flex flex-col h-full">
+      {/* Header with Icon */}
+      <div className="flex items-start space-x-3 mb-3">
+        <div
+          className={`w-12 h-12 ${partner.iconBg} rounded-xl flex items-center justify-center text-white flex-shrink-0`}
         >
-          <ExternalLink className="w-4 h-4" />
-        </a>
+          {partner.icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <h4 className="text-white font-semibold text-lg">{partner.name}</h4>
+          <p className="text-gray-400 text-sm">{partner.tagline}</p>
+        </div>
       </div>
-      <p className="text-gray-400 text-sm mb-3">{partner.description}</p>
-      <div className="flex flex-wrap gap-2">
-        {partner.features.map((feature) => (
-          <span
-            key={feature}
-            className="px-2 py-1 bg-gray-700/50 text-gray-300 text-xs rounded"
-          >
-            {feature}
-          </span>
+
+      {/* Benefits List */}
+      <div className="flex-1 space-y-2 mb-4">
+        {partner.benefits.map((benefit, index) => (
+          <div key={index} className="flex items-start space-x-2">
+            <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+            <span className="text-gray-300 text-sm">{benefit}</span>
+          </div>
         ))}
       </div>
-      {/* TODO: Add affiliate link */}
+
+      {/* Sign Up Button */}
       <a
         href={partner.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-4 block w-full text-center py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors"
+        className="w-full flex items-center justify-center space-x-2 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors"
       >
-        Sign Up
+        <span>Sign Up</span>
+        <ExternalLink className="w-4 h-4" />
       </a>
     </div>
   );

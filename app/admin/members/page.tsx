@@ -9,12 +9,12 @@ interface UserProfile {
   id: string;
   email: string;
   role: string;
-  subscription_tier: "free" | "starter" | "pro" | "enterprise";
+  subscription_tier: "free" | "starter" | "pro" | "unlimited";
   stripe_customer_id?: string;
   created_at: string;
 }
 
-const tiers = ["all", "free", "starter", "pro", "enterprise"] as const;
+const tiers = ["all", "free", "starter", "pro", "unlimited"] as const;
 
 export default function MembersPage() {
   const [users, setUsers] = useState<UserProfile[]>([]);
@@ -66,7 +66,7 @@ export default function MembersPage() {
       free: "bg-gray-700 text-gray-300",
       starter: "bg-blue-500/20 text-blue-400",
       pro: "bg-purple-500/20 text-purple-400",
-      enterprise: "bg-orange-500/20 text-orange-400",
+      unlimited: "bg-orange-500/20 text-orange-400",
     };
     return styles[tier] || styles.free;
   };

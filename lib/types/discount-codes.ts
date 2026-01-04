@@ -20,7 +20,7 @@ export interface DiscountCode {
   description: string | null;
   discount_type: DiscountType;
   discount_value: number; // percentage (0-100), fixed amount, or number of free months
-  applicable_tiers: ("starter" | "pro" | "enterprise")[] | null; // null = all tiers
+  applicable_tiers: ("starter" | "pro" | "unlimited")[] | null; // null = all tiers
   max_uses: number | null; // null = unlimited
   current_uses: number;
   valid_from: string;
@@ -47,14 +47,14 @@ export interface ValidateDiscountCodeResponse {
     type: DiscountType;
     value: number;
     description: string | null;
-    applicable_tiers: ("starter" | "pro" | "enterprise")[] | null;
+    applicable_tiers: ("starter" | "pro" | "unlimited")[] | null;
   };
 }
 
 export interface ApplyDiscountCodeRequest {
   code: string;
   user_id: string;
-  tier?: "starter" | "pro" | "enterprise";
+  tier?: "starter" | "pro" | "unlimited";
 }
 
 export interface ApplyDiscountCodeResponse {

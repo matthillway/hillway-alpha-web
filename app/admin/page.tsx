@@ -49,7 +49,7 @@ export default async function AdminDashboardPage() {
       free: "bg-gray-700 text-gray-300",
       starter: "bg-blue-500/20 text-blue-400",
       pro: "bg-purple-500/20 text-purple-400",
-      enterprise: "bg-orange-500/20 text-orange-400",
+      unlimited: "bg-orange-500/20 text-orange-400",
     };
     return styles[tier] || styles.free;
   };
