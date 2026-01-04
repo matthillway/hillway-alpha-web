@@ -20,6 +20,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Shield,
+  BookOpen,
 } from "lucide-react";
 
 interface Metrics {
@@ -242,6 +243,14 @@ export default function DashboardPage() {
                 <RefreshCw
                   className={`w-5 h-5 ${refreshing ? "animate-spin" : ""}`}
                 />
+              </button>
+              <button
+                onClick={() => router.push("/guides")}
+                className="text-gray-400 hover:text-white"
+                aria-label="Getting Started Guide"
+                title="Getting Started Guide"
+              >
+                <BookOpen className="w-5 h-5" />
               </button>
               {isAdmin && (
                 <button
