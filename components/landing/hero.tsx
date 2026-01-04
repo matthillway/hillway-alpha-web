@@ -44,6 +44,12 @@ export function Hero() {
             See how it works
           </Link>
         </div>
+
+        {/* Risk disclaimer */}
+        <p className="mt-8 text-xs text-slate-500 max-w-lg mx-auto">
+          Trading and betting involve risk. Past performance does not guarantee
+          future results. Capital at risk. Please trade responsibly.
+        </p>
       </div>
     </section>
   );

@@ -301,9 +301,9 @@ export default function PricingPage() {
                 Betting Arbitrage Scanner
               </h3>
               <p className="text-zinc-400 text-sm">
-                Find guaranteed profit opportunities across bookmakers. Our
-                scanner compares odds in real-time and calculates optimal stake
-                distribution.
+                Identify mathematically-backed opportunities across bookmakers.
+                Our scanner compares odds in real-time and calculates optimal
+                stake distribution.
               </p>
             </div>
 
@@ -431,6 +431,21 @@ export default function PricingPage() {
             <p className="mt-6 text-xs text-zinc-500">
               No credit card required. Cancel anytime.
             </p>
+            {/* Trust signals */}
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-zinc-500">
+              <div className="flex items-center gap-1.5">
+                <Check className="h-3.5 w-3.5 text-emerald-500" />
+                <span>SSL Encrypted</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Check className="h-3.5 w-3.5 text-emerald-500" />
+                <span>GDPR Compliant</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Check className="h-3.5 w-3.5 text-emerald-500" />
+                <span>Secure Stripe Payments</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>

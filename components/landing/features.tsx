@@ -5,7 +5,7 @@ const features = [
     icon: Target,
     title: "Betting Arbitrage",
     description:
-      "Guaranteed profit from odds discrepancies. Monitor hundreds of markets in real-time for risk-free opportunities.",
+      "Identify odds discrepancies across bookmakers. Monitor hundreds of markets in real-time for mathematically-backed opportunities.",
   },
   {
     icon: TrendingUp,
