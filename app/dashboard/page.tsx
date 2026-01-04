@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import {
   TrendingUp,
   Activity,
@@ -59,6 +60,7 @@ interface Opportunity {
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { success, error: showError } = useToast();
   const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
@@ -66,6 +68,7 @@ export default function DashboardPage() {
   const [scanning, setScanning] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userTier, setUserTier] = useState<string>("free");
 
   const fetchData = useCallback(async () => {
     setRefreshing(true);
@@ -113,6 +116,17 @@ export default function DashboardPage() {
         setIsAdmin(true);
       }
 
+      // Fetch user subscription tier
+      const { data: userData } = await supabase
+        .from("users")
+        .select("subscription_tier")
+        .eq("id", session.user.id)
+        .single();
+
+      if (userData?.subscription_tier) {
+        setUserTier(userData.subscription_tier);
+      }
+
       setLoading(false);
       fetchData();
     }
@@ -133,19 +147,27 @@ export default function DashboardPage() {
         body: JSON.stringify({
           scanType,
           userId: user?.id,
-          userTier: "starter", // TODO: Get from user profile
+          userTier,
         }),
       });
 
       if (res.ok) {
+        const data = await res.json();
         await fetchData();
+        const count = data.opportunities?.length ?? 0;
+        success(
+          count > 0
+            ? `Scan complete! Found ${count} new ${count === 1 ? "opportunity" : "opportunities"}.`
+            : "Scan complete. No new opportunities found.",
+        );
       } else {
-        const error = await res.json();
-        console.error("Scan error:", error);
-        // TODO: Show error toast
+        const errorData = await res.json();
+        console.error("Scan error:", errorData);
+        showError(errorData.error || "Failed to run scan. Please try again.");
       }
-    } catch (error) {
-      console.error("Scan failed:", error);
+    } catch (err) {
+      console.error("Scan failed:", err);
+      showError("Network error. Please check your connection and try again.");
     } finally {
       setScanning(false);
     }

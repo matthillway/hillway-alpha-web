@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { v4 as uuidv4 } from "uuid";
 
-// Create Supabase client
+// Scanner imports
+import { createMomentumScanner } from "@/lib/scanners/stocks/momentum";
+import { createFundingRateScanner } from "@/lib/scanners/crypto/funding-rates";
+// Arbitrage scanner requires ODDS_API_KEY
+import { createArbitrageScanner } from "@/lib/scanners/betting/arbitrage";
+import { createOddsApiClient } from "@/lib/scanner-api/odds-api";
+
+// Create Supabase client with service role for inserts
 function getSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-  return createClient(supabaseUrl, supabaseAnonKey);
+  const supabaseKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  return createClient(supabaseUrl, supabaseKey);
 }
 
 // Tier limits
@@ -15,6 +25,20 @@ const TIER_LIMITS: Record<string, number> = {
   pro: 1000, // 1000 scans per day
   enterprise: -1, // Unlimited
 };
+
+interface DbOpportunity {
+  id: string;
+  category: string;
+  subcategory: string;
+  title: string;
+  description: string;
+  confidence_score: number;
+  expected_value: number;
+  data: Record<string, unknown>;
+  expires_at: string | null;
+  status: string;
+  user_id: string | null;
+}
 
 // POST /api/scanner/run - Trigger a scan
 export async function POST(request: NextRequest) {
@@ -89,49 +113,190 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // In a production setup, this would call the hillway-alpha scanner API
-    // For now, we'll return the latest opportunities from the database
+    // Run the actual scanners
+    const opportunities: DbOpportunity[] = [];
+    const errors: string[] = [];
 
-    let query = supabase
-      .from("opportunities")
-      .select("*")
-      .eq("status", "open")
-      .order("created_at", { ascending: false })
-      .limit(20);
+    // Determine which scanners to run
+    const runArbitrage = scanType === "arbitrage" || scanType === "all";
+    const runStocks = scanType === "stocks" || scanType === "all";
+    const runCrypto = scanType === "crypto" || scanType === "all";
 
-    // Filter by category if specific scan type
-    if (scanType !== "all") {
-      const categoryMap: Record<string, string> = {
-        arbitrage: "arbitrage",
-        value_bets: "value_bet",
-        stocks: "stock",
-        crypto: "crypto",
-      };
-      query = query.eq("category", categoryMap[scanType]);
+    // Run arbitrage scanner (requires ODDS_API_KEY)
+    if (runArbitrage) {
+      try {
+        if (!process.env.ODDS_API_KEY) {
+          errors.push(
+            "Arbitrage scanner unavailable: ODDS_API_KEY not configured",
+          );
+        } else {
+          const oddsClient = createOddsApiClient();
+          const arbScanner = createArbitrageScanner(oddsClient, {
+            minMargin: 1.0,
+            maxHoursAhead: 48,
+            totalStake: 100,
+          });
+
+          const arbOpportunities = await arbScanner.scan();
+
+          for (const arb of arbOpportunities) {
+            const expiresAt = new Date(arb.commenceTime);
+            opportunities.push({
+              id: uuidv4(),
+              category: "arbitrage",
+              subcategory: arb.sport,
+              title: `${arb.event} - ${arb.margin.toFixed(2)}% margin`,
+              description: `Arbitrage opportunity: ${arb.stakes.map((s) => `${s.team} @ ${s.odds} (${s.bookmaker})`).join(" vs ")}`,
+              confidence_score: Math.min(100, Math.round(50 + arb.margin * 10)),
+              expected_value: arb.guaranteedProfit,
+              data: {
+                eventId: arb.eventId,
+                homeTeam: arb.homeTeam,
+                awayTeam: arb.awayTeam,
+                sport: arb.sport,
+                sportTitle: arb.sportTitle,
+                margin: arb.margin,
+                stakes: arb.stakes,
+                totalStake: arb.totalStake,
+                guaranteedReturn: arb.guaranteedReturn,
+                hoursUntilStart: arb.hoursUntilStart,
+              },
+              expires_at: expiresAt.toISOString(),
+              status: "open",
+              user_id: userId || null,
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Arbitrage scan error:", err);
+        errors.push(`Arbitrage scan failed: ${(err as Error).message}`);
+      }
     }
 
-    const { data: opportunities, error } = await query;
+    // Run stock momentum scanner
+    if (runStocks) {
+      try {
+        const momentumScanner = createMomentumScanner({
+          markets: ["UK", "US"],
+          minConfidence: 50,
+        });
 
-    if (error) {
-      console.error("Error fetching opportunities:", error);
-      return NextResponse.json({ error: "Scan failed" }, { status: 500 });
+        const stockOpportunities = await momentumScanner.getTopOpportunities(
+          10,
+          "bullish",
+        );
+
+        for (const stock of stockOpportunities) {
+          // Stock opportunities don't expire but we set 24h window
+          const expiresAt = new Date();
+          expiresAt.setHours(expiresAt.getHours() + 24);
+
+          opportunities.push({
+            id: uuidv4(),
+            category: "stock",
+            subcategory: stock.market,
+            title: `${stock.symbol} - ${stock.overallSignal.replace("_", " ")}`,
+            description: stock.reasoning,
+            confidence_score: stock.confidence,
+            expected_value: stock.priceChange,
+            data: {
+              symbol: stock.symbol,
+              name: stock.name,
+              market: stock.market,
+              currentPrice: stock.currentPrice,
+              priceChange: stock.priceChange,
+              priceChangePercent: stock.priceChangePercent,
+              signals: stock.signals,
+              overallSignal: stock.overallSignal,
+              technicals: stock.technicals,
+              volumeRatio: stock.volumeRatio,
+              fiftyTwoWeekPosition: stock.fiftyTwoWeekPosition,
+              suggestedAction: stock.suggestedAction,
+            },
+            expires_at: expiresAt.toISOString(),
+            status: "open",
+            user_id: userId || null,
+          });
+        }
+      } catch (err) {
+        console.error("Stock scan error:", err);
+        errors.push(`Stock scan failed: ${(err as Error).message}`);
+      }
     }
 
-    // In a real implementation, we'd trigger the actual scanner here
-    // and wait for results or return a job ID for polling
+    // Run crypto funding rate scanner
+    if (runCrypto) {
+      try {
+        const fundingScanner = createFundingRateScanner({
+          minAnnualizedRate: 50,
+          topPairsCount: 20,
+        });
 
+        const cryptoOpportunities = await fundingScanner.getTopOpportunities(5);
+
+        for (const crypto of cryptoOpportunities) {
+          opportunities.push({
+            id: uuidv4(),
+            category: "crypto",
+            subcategory: "funding_rate",
+            title: `${crypto.symbol} - ${crypto.direction} ${Math.abs(crypto.annualizedRate).toFixed(0)}% APY`,
+            description: `Funding rate opportunity: Go ${crypto.direction} on ${crypto.asset}. Current rate ${crypto.currentRate.toFixed(4)}% per 8h (${crypto.annualizedRate.toFixed(1)}% annualized). Risk: ${crypto.riskLevel}`,
+            confidence_score: crypto.confidence,
+            expected_value:
+              crypto.suggestedSize * (crypto.annualizedRate / 100),
+            data: {
+              symbol: crypto.symbol,
+              asset: crypto.asset,
+              currentRate: crypto.currentRate,
+              annualizedRate: crypto.annualizedRate,
+              direction: crypto.direction,
+              markPrice: crypto.markPrice,
+              nextFundingTime: crypto.nextFundingTime.toISOString(),
+              riskLevel: crypto.riskLevel,
+              suggestedSize: crypto.suggestedSize,
+            },
+            expires_at: crypto.nextFundingTime.toISOString(),
+            status: "open",
+            user_id: userId || null,
+          });
+        }
+      } catch (err) {
+        console.error("Crypto scan error:", err);
+        errors.push(`Crypto scan failed: ${(err as Error).message}`);
+      }
+    }
+
+    // Insert opportunities into database
+    if (opportunities.length > 0) {
+      const { error: insertError } = await supabase
+        .from("opportunities")
+        .insert(opportunities);
+
+      if (insertError) {
+        console.error("Error inserting opportunities:", insertError);
+        errors.push(`Database insert failed: ${insertError.message}`);
+      }
+    }
+
+    // Return results
     return NextResponse.json({
       success: true,
       scanType,
       timestamp: new Date().toISOString(),
-      opportunities: opportunities || [],
-      count: opportunities?.length || 0,
-      message: `Found ${opportunities?.length || 0} ${scanType} opportunities`,
+      opportunities,
+      count: opportunities.length,
+      errors: errors.length > 0 ? errors : undefined,
+      message:
+        opportunities.length > 0
+          ? `Found ${opportunities.length} opportunities`
+          : errors.length > 0
+            ? `Scan completed with errors: ${errors.join("; ")}`
+            : "No opportunities found",
     });
   } catch (error) {
     console.error("API error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Internal server error", details: (error as Error).message },
       { status: 500 },
     );
   }

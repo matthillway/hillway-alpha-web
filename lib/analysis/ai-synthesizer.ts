@@ -3,9 +3,14 @@
 // Uses Claude to generate intelligent briefings
 // ============================================
 
-import Anthropic from '@anthropic-ai/sdk';
-import { ArbitrageOpportunity, DbOpportunity, DailyBriefing, RankedOpportunity } from '@/lib/types/scanner';
-import dayjs from 'dayjs';
+import Anthropic from "@anthropic-ai/sdk";
+import {
+  ArbitrageOpportunity,
+  DbOpportunity,
+  DailyBriefing,
+  RankedOpportunity,
+} from "@/lib/types/scanner";
+import dayjs from "dayjs";
 
 let anthropicClient: Anthropic | null = null;
 
@@ -17,7 +22,7 @@ function getAnthropicClient(): Anthropic {
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    throw new Error('ANTHROPIC_API_KEY is required for AI synthesis');
+    throw new Error("ANTHROPIC_API_KEY is required for AI synthesis");
   }
 
   anthropicClient = new Anthropic({ apiKey });
@@ -35,17 +40,18 @@ export function isAiConfigured(): boolean {
  * Generate market context summary
  */
 export async function generateMarketContext(
-  opportunities: DbOpportunity[]
+  opportunities: DbOpportunity[],
 ): Promise<string> {
   if (!isAiConfigured()) {
-    return 'Market context unavailable (AI not configured)';
+    return "Market context unavailable (AI not configured)";
   }
 
   const client = getAnthropicClient();
 
-  const summary = opportunities.length > 0
-    ? `Found ${opportunities.length} opportunities across categories: ${[...new Set(opportunities.map(o => o.category))].join(', ')}`
-    : 'No significant opportunities detected';
+  const summary =
+    opportunities.length > 0
+      ? `Found ${opportunities.length} opportunities across categories: ${[...new Set(opportunities.map((o) => o.category))].join(", ")}`
+      : "No significant opportunities detected";
 
   const prompt = `You are a trading analyst providing a brief market context for a daily briefing.
 Based on the following opportunity summary, provide a 2-3 sentence market overview:
@@ -56,15 +62,15 @@ Keep it concise and actionable. Focus on what matters for finding trading/bettin
 
   try {
     const response = await client.messages.create({
-      model: 'claude-3-5-haiku-20241022',
+      model: "claude-3-5-haiku-20241022",
       max_tokens: 200,
-      messages: [{ role: 'user', content: prompt }],
+      messages: [{ role: "user", content: prompt }],
     });
 
-    const textBlock = response.content.find(block => block.type === 'text');
+    const textBlock = response.content.find((block) => block.type === "text");
     return textBlock ? textBlock.text : summary;
   } catch (error) {
-    console.error('AI market context generation failed:', error);
+    console.error("AI market context generation failed:", error);
     return summary;
   }
 }
@@ -74,42 +80,44 @@ Keep it concise and actionable. Focus on what matters for finding trading/bettin
  */
 export async function generateAiInsight(
   opportunities: DbOpportunity[],
-  recentResults?: { wins: number; losses: number; pnl: number }
+  recentResults?: { wins: number; losses: number; pnl: number },
 ): Promise<string> {
   if (!isAiConfigured()) {
-    return 'AI insights unavailable (not configured)';
+    return "AI insights unavailable (not configured)";
   }
 
   const client = getAnthropicClient();
 
-  const categories = [...new Set(opportunities.map(o => o.category))];
-  const avgConfidence = opportunities.length > 0
-    ? opportunities.reduce((sum, o) => sum + (o.confidence_score || 0), 0) / opportunities.length
-    : 0;
+  const categories = [...new Set(opportunities.map((o) => o.category))];
+  const avgConfidence =
+    opportunities.length > 0
+      ? opportunities.reduce((sum, o) => sum + (o.confidence_score || 0), 0) /
+        opportunities.length
+      : 0;
 
   const prompt = `You are an AI trading analyst providing insights for a personal opportunity scanner.
 
 Current data:
 - ${opportunities.length} opportunities found
-- Categories: ${categories.join(', ') || 'none'}
+- Categories: ${categories.join(", ") || "none"}
 - Average confidence score: ${avgConfidence.toFixed(0)}%
-${recentResults ? `- Recent performance: ${recentResults.wins} wins, ${recentResults.losses} losses, £${recentResults.pnl.toFixed(2)} P&L` : ''}
+${recentResults ? `- Recent performance: ${recentResults.wins} wins, ${recentResults.losses} losses, £${recentResults.pnl.toFixed(2)} P&L` : ""}
 
 Provide ONE key insight or observation (1-2 sentences). Be specific and actionable.
 Focus on patterns, risks, or opportunities worth noting.`;
 
   try {
     const response = await client.messages.create({
-      model: 'claude-3-5-haiku-20241022',
+      model: "claude-3-5-haiku-20241022",
       max_tokens: 150,
-      messages: [{ role: 'user', content: prompt }],
+      messages: [{ role: "user", content: prompt }],
     });
 
-    const textBlock = response.content.find(block => block.type === 'text');
-    return textBlock ? textBlock.text : 'No specific patterns detected today.';
+    const textBlock = response.content.find((block) => block.type === "text");
+    return textBlock ? textBlock.text : "No specific patterns detected today.";
   } catch (error) {
-    console.error('AI insight generation failed:', error);
-    return 'AI insights temporarily unavailable.';
+    console.error("AI insight generation failed:", error);
+    return "AI insights temporarily unavailable.";
   }
 }
 
@@ -117,13 +125,13 @@ Focus on patterns, risks, or opportunities worth noting.`;
  * Score and rank opportunities using AI
  */
 export async function rankOpportunitiesWithAi(
-  opportunities: DbOpportunity[]
+  opportunities: DbOpportunity[],
 ): Promise<RankedOpportunity[]> {
   // For now, use simple rule-based ranking
   // AI can be added later for more sophisticated analysis
 
   const ranked = opportunities
-    .filter(o => o.status === 'open')
+    .filter((o) => o.status === "open")
     .sort((a, b) => {
       // Primary: confidence score
       const confDiff = (b.confidence_score || 0) - (a.confidence_score || 0);
@@ -150,11 +158,11 @@ export async function rankOpportunitiesWithAi(
  * Calculate suggested stake based on confidence and bankroll
  */
 function calculateSuggestedStake(opp: DbOpportunity): number {
-  const bettingBankroll = parseFloat(process.env.BETTING_BANKROLL || '1000');
-  const kellyFraction = parseFloat(process.env.KELLY_FRACTION || '0.25');
+  const bettingBankroll = parseFloat(process.env.BETTING_BANKROLL || "1000");
+  const kellyFraction = parseFloat(process.env.KELLY_FRACTION || "0.25");
 
   // For arbitrage, use fixed percentage of bankroll
-  if (opp.category === 'arbitrage') {
+  if (opp.category === "arbitrage") {
     return Math.min(bettingBankroll * 0.1, 100); // 10% max, £100 cap
   }
 
@@ -170,13 +178,13 @@ function calculateSuggestedStake(opp: DbOpportunity): number {
  * Calculate action window description
  */
 function calculateActionWindow(opp: DbOpportunity): string {
-  if (!opp.expires_at) return 'No deadline';
+  if (!opp.expires_at) return "No deadline";
 
   const expiresAt = dayjs(opp.expires_at);
   const now = dayjs();
-  const hoursUntil = expiresAt.diff(now, 'hour', true);
+  const hoursUntil = expiresAt.diff(now, "hour", true);
 
-  if (hoursUntil < 0) return 'Expired';
+  if (hoursUntil < 0) return "Expired";
   if (hoursUntil < 1) return `${Math.round(hoursUntil * 60)} minutes`;
   if (hoursUntil < 24) return `${hoursUntil.toFixed(1)} hours`;
   return `${Math.floor(hoursUntil / 24)} days`;
@@ -186,15 +194,60 @@ function calculateActionWindow(opp: DbOpportunity): string {
  * Generate simple reasoning for opportunity
  */
 function generateReasoning(opp: DbOpportunity): string {
-  if (opp.category === 'arbitrage') {
+  if (opp.category === "arbitrage") {
     return `Mathematically guaranteed ${opp.expected_value?.toFixed(2)}% profit across multiple bookmakers.`;
   }
 
-  if (opp.category === 'value_bet') {
+  if (opp.category === "value_bet") {
     return `Model probability exceeds implied odds by ${opp.expected_value?.toFixed(2)}% (positive expected value).`;
   }
 
-  return opp.description || 'Opportunity meets confidence threshold.';
+  return opp.description || "Opportunity meets confidence threshold.";
+}
+
+/**
+ * Calculate recommendation accuracy based on outcomes
+ *
+ * Recommendation accuracy measures how well our confidence-weighted
+ * recommendations performed. It differs from simple win rate by
+ * accounting for whether high-confidence recommendations won more often.
+ *
+ * Formula:
+ * - Base: Win rate (0-100%)
+ * - Bonus: If PnL is positive, add up to 20% based on profitability
+ * - This rewards systems that not only win but win profitably
+ *
+ * Range: 0-100%
+ */
+function calculateRecommendationAccuracy(
+  wins: number,
+  losses: number,
+  pnl: number,
+): number {
+  const totalBets = wins + losses;
+
+  // No data = no accuracy to report
+  if (totalBets === 0) return 0;
+
+  // Base accuracy is the win rate
+  const winRate = (wins / totalBets) * 100;
+
+  // Calculate profitability bonus (0-20%)
+  // If PnL is positive, recommendations are proving valuable
+  // Cap the bonus at 20% to prevent distortion
+  let profitabilityBonus = 0;
+  if (pnl > 0 && totalBets > 0) {
+    // Average profit per bet, normalized (assume £10 average stake for scaling)
+    const avgProfitPerBet = pnl / totalBets;
+    // Scale: £0 = 0%, £2+ = 20% bonus
+    profitabilityBonus = Math.min(20, (avgProfitPerBet / 2) * 20);
+  }
+
+  // Combine win rate with profitability bonus, capped at 100%
+  const accuracy = Math.min(100, winRate + profitabilityBonus);
+
+  // Round to 1 decimal place
+  return Math.round(accuracy * 10) / 10;
 }
 
 /**
@@ -202,7 +255,7 @@ function generateReasoning(opp: DbOpportunity): string {
  */
 export async function generateDailyBriefing(
   opportunities: DbOpportunity[],
-  yesterdayResults?: { wins: number; losses: number; pnl: number }
+  yesterdayResults?: { wins: number; losses: number; pnl: number },
 ): Promise<DailyBriefing> {
   const today = dayjs();
 
@@ -214,8 +267,21 @@ export async function generateDailyBriefing(
   ]);
 
   // Split into top opportunities and watchlist
-  const topOpportunities = rankedOpportunities.filter(o => o.confidence >= 60);
-  const watchlist = rankedOpportunities.filter(o => o.confidence >= 40 && o.confidence < 60);
+  const topOpportunities = rankedOpportunities.filter(
+    (o) => o.confidence >= 60,
+  );
+  const watchlist = rankedOpportunities.filter(
+    (o) => o.confidence >= 40 && o.confidence < 60,
+  );
+
+  // Calculate recommendation accuracy from yesterday's results
+  const recommendationAccuracy = yesterdayResults
+    ? calculateRecommendationAccuracy(
+        yesterdayResults.wins,
+        yesterdayResults.losses,
+        yesterdayResults.pnl,
+      )
+    : 0;
 
   return {
     date: today.toDate(),
@@ -225,10 +291,13 @@ export async function generateDailyBriefing(
     yesterdayResults: yesterdayResults
       ? {
           totalPnL: yesterdayResults.pnl,
-          winRate: yesterdayResults.wins + yesterdayResults.losses > 0
-            ? (yesterdayResults.wins / (yesterdayResults.wins + yesterdayResults.losses)) * 100
-            : 0,
-          recommendationAccuracy: 0, // TODO: Calculate from actual data
+          winRate:
+            yesterdayResults.wins + yesterdayResults.losses > 0
+              ? (yesterdayResults.wins /
+                  (yesterdayResults.wins + yesterdayResults.losses)) *
+                100
+              : 0,
+          recommendationAccuracy,
           byCategory: {},
         }
       : {
@@ -247,53 +316,58 @@ export async function generateDailyBriefing(
 export function formatBriefingAsText(briefing: DailyBriefing): string {
   const lines: string[] = [];
 
-  lines.push('═'.repeat(60));
+  lines.push("═".repeat(60));
   lines.push(`  HILLWAY ALPHA - Daily Briefing`);
-  lines.push(`  ${dayjs(briefing.date).format('dddd, MMMM D, YYYY')}`);
-  lines.push('═'.repeat(60));
-  lines.push('');
+  lines.push(`  ${dayjs(briefing.date).format("dddd, MMMM D, YYYY")}`);
+  lines.push("═".repeat(60));
+  lines.push("");
 
-  lines.push('📊 MARKET CONTEXT');
+  lines.push("📊 MARKET CONTEXT");
   lines.push(briefing.marketContext);
-  lines.push('');
+  lines.push("");
 
   if (briefing.topOpportunities.length > 0) {
-    lines.push('🎯 TOP OPPORTUNITIES');
-    lines.push('');
+    lines.push("🎯 TOP OPPORTUNITIES");
+    lines.push("");
 
     for (const opp of briefing.topOpportunities) {
       lines.push(`${opp.rank}. ${opp.opportunity.title}`);
       lines.push(`   Category: ${opp.opportunity.category}`);
-      lines.push(`   Confidence: ${opp.confidence}% | EV: +${opp.expectedValue.toFixed(2)}%`);
+      lines.push(
+        `   Confidence: ${opp.confidence}% | EV: +${opp.expectedValue.toFixed(2)}%`,
+      );
       lines.push(`   Suggested Stake: £${opp.suggestedStake.toFixed(2)}`);
       lines.push(`   Action Window: ${opp.actionWindow}`);
       lines.push(`   ${opp.reasoning}`);
-      lines.push('');
+      lines.push("");
     }
   } else {
-    lines.push('📭 No high-confidence opportunities today.');
-    lines.push('');
+    lines.push("📭 No high-confidence opportunities today.");
+    lines.push("");
   }
 
   if (briefing.watchlist.length > 0) {
-    lines.push('⏰ WATCHLIST');
+    lines.push("⏰ WATCHLIST");
     for (const opp of briefing.watchlist) {
       lines.push(`  - ${opp.opportunity.title} (${opp.confidence}% conf)`);
     }
-    lines.push('');
+    lines.push("");
   }
 
-  if (briefing.yesterdayResults.totalPnL !== 0 || briefing.yesterdayResults.winRate > 0) {
-    lines.push('📈 YESTERDAY\'S RESULTS');
+  if (
+    briefing.yesterdayResults.totalPnL !== 0 ||
+    briefing.yesterdayResults.winRate > 0
+  ) {
+    lines.push("📈 YESTERDAY'S RESULTS");
     lines.push(`   P&L: £${briefing.yesterdayResults.totalPnL.toFixed(2)}`);
     lines.push(`   Win Rate: ${briefing.yesterdayResults.winRate.toFixed(1)}%`);
-    lines.push('');
+    lines.push("");
   }
 
-  lines.push('💡 AI INSIGHT');
+  lines.push("💡 AI INSIGHT");
   lines.push(briefing.aiInsight);
-  lines.push('');
-  lines.push('─'.repeat(60));
+  lines.push("");
+  lines.push("─".repeat(60));
 
-  return lines.join('\n');
+  return lines.join("\n");
 }

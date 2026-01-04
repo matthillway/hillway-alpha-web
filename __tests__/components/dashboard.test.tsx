@@ -1,6 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import DashboardPage from "@/app/dashboard/page";
+import { ToastProvider } from "@/components/ui/toast";
+
+// Helper to render with providers
+const renderWithProviders = (ui: React.ReactElement) => {
+  return render(<ToastProvider>{ui}</ToastProvider>);
+};
 
 // Mock fetch globally
 const mockFetch = vi.fn();
@@ -18,12 +24,23 @@ vi.mock("next/navigation", () => ({
 // Mock Supabase
 const mockGetSession = vi.fn();
 const mockSignOut = vi.fn();
+const mockSelect = vi.fn();
+const mockEq = vi.fn();
+const mockSingle = vi.fn();
+
 vi.mock("@/lib/supabase", () => ({
   supabase: {
     auth: {
       getSession: () => mockGetSession(),
       signOut: () => mockSignOut(),
     },
+    from: () => ({
+      select: () => ({
+        eq: () => ({
+          single: () => Promise.resolve({ data: null, error: null }),
+        }),
+      }),
+    }),
   },
 }));
 
@@ -46,10 +63,10 @@ describe("DashboardPage", () => {
   it("redirects to login when no session", async () => {
     mockGetSession.mockResolvedValue({ data: { session: null } });
 
-    render(<DashboardPage />);
+    renderWithProviders(<DashboardPage />);
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/auth/login");
+      expect(mockPush).toHaveBeenCalledWith("/login");
     });
   });
 
@@ -61,7 +78,7 @@ describe("DashboardPage", () => {
     });
     mockGetSession.mockReturnValue(sessionPromise);
 
-    render(<DashboardPage />);
+    renderWithProviders(<DashboardPage />);
 
     // Check for spinner (the loading div with animate-spin class)
     const spinner = document.querySelector(".animate-spin");
@@ -72,7 +89,7 @@ describe("DashboardPage", () => {
 
     // Wait for cleanup
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/auth/login");
+      expect(mockPush).toHaveBeenCalledWith("/login");
     });
   });
 
@@ -122,7 +139,7 @@ describe("DashboardPage", () => {
       return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
     });
 
-    render(<DashboardPage />);
+    renderWithProviders(<DashboardPage />);
 
     await waitFor(() => {
       expect(screen.getByText("TradeSmart")).toBeInTheDocument();
@@ -161,7 +178,7 @@ describe("DashboardPage", () => {
         }),
     });
 
-    render(<DashboardPage />);
+    renderWithProviders(<DashboardPage />);
 
     await waitFor(() => {
       expect(screen.getByText(/Welcome back, matt!/)).toBeInTheDocument();
@@ -210,7 +227,7 @@ describe("DashboardPage", () => {
       });
     });
 
-    render(<DashboardPage />);
+    renderWithProviders(<DashboardPage />);
 
     await waitFor(() => {
       // Check for opportunity count
@@ -258,7 +275,7 @@ describe("DashboardPage", () => {
       });
     });
 
-    render(<DashboardPage />);
+    renderWithProviders(<DashboardPage />);
 
     await waitFor(() => {
       expect(
@@ -299,7 +316,7 @@ describe("DashboardPage", () => {
         }),
     });
 
-    render(<DashboardPage />);
+    renderWithProviders(<DashboardPage />);
 
     await waitFor(() => {
       expect(screen.getByText("Betting Arbitrage")).toBeInTheDocument();
