@@ -11,12 +11,18 @@ const inter = Inter({
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#ffffff",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f1117" },
+  ],
 };
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tradesmarthub.com"),
-  title: "TradeSmart - AI-Powered Multi-Asset Opportunity Scanner",
+  title: {
+    default: "TradeSmart - AI-Powered Multi-Asset Opportunity Scanner",
+    template: "%s | TradeSmart",
+  },
   description:
     "Find profitable opportunities across betting arbitrage, stock momentum, and crypto funding rates. Get real-time alerts delivered to your phone. Start your free trial today.",
   keywords: [
@@ -28,9 +34,23 @@ export const metadata: Metadata = {
     "AI trading",
     "opportunity scanner",
     "market signals",
+    "sports betting",
+    "value betting",
+    "matched betting",
+    "trading signals",
+    "crypto alerts",
+    "stock alerts",
   ],
-  authors: [{ name: "TradeSmart" }],
+  authors: [{ name: "TradeSmart", url: "https://tradesmarthub.com" }],
   creator: "TradeSmart",
+  publisher: "Hillway.ai",
+  formatDetection: {
+    email: false,
+    telephone: false,
+  },
+  alternates: {
+    canonical: "https://tradesmarthub.com",
+  },
   openGraph: {
     type: "website",
     locale: "en_GB",
@@ -39,25 +59,28 @@ export const metadata: Metadata = {
     description:
       "Find profitable opportunities across betting arbitrage, stock momentum, and crypto funding rates. Get real-time alerts delivered to your phone.",
     siteName: "TradeSmart",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "TradeSmart - Find Alpha Across Every Market",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "TradeSmart - AI-Powered Multi-Asset Opportunity Scanner",
     description:
       "Find profitable opportunities across betting arbitrage, stock momentum, and crypto funding rates.",
-    images: ["/og-image.png"],
+    creator: "@tradesmarthub",
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    // Add Google Search Console verification when available
+    // google: "your-google-verification-code",
   },
 };
 
