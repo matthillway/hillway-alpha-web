@@ -77,7 +77,7 @@ function Header() {
             href="/login?signup=true"
             className="hidden h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 sm:inline-flex"
           >
-            Get Started
+            Sign Up
           </Link>
           {/* Mobile Menu Button */}
           <button
@@ -150,7 +150,7 @@ function Header() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex h-10 w-full items-center justify-center rounded-md bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               >
-                Get Started
+                Sign Up
               </Link>
             </div>
           </nav>

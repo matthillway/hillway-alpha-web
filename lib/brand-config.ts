@@ -10,9 +10,9 @@ export const BRAND_CONFIG = {
   supportEmail: "support@tradesmarthub.com",
   salesEmail: "sales@tradesmarthub.com",
   colors: {
-    primary: "#000000",
-    accent: "#3B82F6",
-    accentDark: "#1D4ED8",
+    primary: "#16A34A",
+    accent: "#15803D",
+    accentDark: "#166534",
   },
   social: {
     twitter: "https://twitter.com/tradesmarthub",

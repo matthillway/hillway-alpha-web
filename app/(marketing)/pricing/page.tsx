@@ -30,7 +30,7 @@ const tiers = [
     period: "/month",
     description: "Perfect for getting started",
     features: [
-      "3 markets (choose any)",
+      "1 market of your choice",
       "100 scans per day",
       "Email alerts",
       "Basic analytics",
@@ -46,8 +46,8 @@ const tiers = [
     period: "/month",
     description: "For serious traders and bettors",
     features: [
-      "All 3 markets included",
-      "1,000 scans per day",
+      "2 markets of your choice",
+      "500 scans per day",
       "Real-time WhatsApp alerts",
       "AI-powered daily briefings",
       "Advanced stake calculator",
@@ -60,21 +60,21 @@ const tiers = [
     badge: "Most Popular",
   },
   {
-    name: "Enterprise",
-    price: "£149",
+    name: "Unlimited",
+    price: "£99",
     period: "/month",
-    description: "For teams and professionals",
+    description: "Full access to everything",
     features: [
+      "All 3 markets included",
       "Unlimited scans",
+      "All Pro features",
       "Full API access",
       "Custom integrations",
-      "White-label options",
       "Dedicated account manager",
-      "Custom reporting",
-      "SLA guarantee",
+      "Priority support",
     ],
-    cta: "Contact Sales",
-    href: `mailto:${BRAND_CONFIG.salesEmail}`,
+    cta: "Start Free Trial",
+    href: "/login?signup=true&plan=unlimited",
     highlighted: false,
   },
 ];
@@ -98,12 +98,12 @@ const faqs = [
   {
     question: "Is there a free trial?",
     answer:
-      "Yes! Starter and Pro plans include a 7-day free trial. No credit card required to start. You can also use the Free tier indefinitely with sample data.",
+      "Yes! All paid plans include a 7-day free trial. No credit card required to start. You can also use the Free tier indefinitely with sample data.",
   },
   {
     question: "What payment methods do you accept?",
     answer:
-      "We accept all major credit and debit cards via Stripe. Enterprise customers can arrange invoice billing.",
+      "We accept all major credit and debit cards via Stripe. For bespoke billing arrangements, contact us.",
   },
   {
     question: "How accurate is the AI scoring?",
