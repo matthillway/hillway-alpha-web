@@ -61,7 +61,7 @@ interface Opportunity {
   description: string;
   confidence_score: number;
   expected_value: number;
-  data: Record<string, unknown>;
+  data: Record<string, unknown> & { isDemo?: boolean; margin?: number };
   created_at: string;
   expires_at: string | null;
 }
