@@ -776,7 +776,16 @@ export default function DashboardPage() {
                         {getCategoryIcon(opp.category)}
                       </div>
                       <div>
-                        <h3 className="text-white font-medium">{opp.title}</h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-white font-medium">
+                            {opp.title}
+                          </h3>
+                          {opp.data?.isDemo && (
+                            <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs rounded-full font-medium">
+                              DEMO
+                            </span>
+                          )}
+                        </div>
                         <p className="text-gray-400 text-sm">
                           {opp.description?.slice(0, 60)}...
                         </p>

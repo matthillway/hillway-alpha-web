@@ -60,6 +60,246 @@ interface DbOpportunity {
   user_id: string | null;
 }
 
+// Generate demo opportunities for free tier users
+function generateDemoOpportunities(
+  scanType: string,
+  userId: string | null,
+): DbOpportunity[] {
+  const now = new Date();
+  const expiresIn24h = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+  const expiresIn48h = new Date(now.getTime() + 48 * 60 * 60 * 1000);
+
+  const demoOpps: DbOpportunity[] = [];
+
+  // Betting demo opportunities
+  if (
+    scanType === "arbitrage" ||
+    scanType === "betting" ||
+    scanType === "all"
+  ) {
+    demoOpps.push({
+      id: `demo-arb-${Date.now()}`,
+      category: "arbitrage",
+      subcategory: "soccer_epl",
+      title: "Arsenal vs Chelsea - 2.3% margin",
+      description:
+        "Arbitrage opportunity: Arsenal @ 2.10 (Bet365) vs Chelsea @ 3.80 (William Hill) vs Draw @ 3.40 (Betfair)",
+      confidence_score: 85,
+      expected_value: 2.3,
+      data: {
+        eventId: "demo-event-1",
+        homeTeam: "Arsenal",
+        awayTeam: "Chelsea",
+        sport: "soccer_epl",
+        sportTitle: "English Premier League",
+        margin: 2.3,
+        isDemo: true,
+        stakes: [
+          { team: "Arsenal", odds: 2.1, bookmaker: "Bet365", stake: 47.62 },
+          {
+            team: "Chelsea",
+            odds: 3.8,
+            bookmaker: "William Hill",
+            stake: 26.32,
+          },
+          { team: "Draw", odds: 3.4, bookmaker: "Betfair", stake: 29.41 },
+        ],
+        totalStake: 100,
+        guaranteedReturn: 102.3,
+        aiAnalysis: {
+          summary:
+            "Strong arbitrage opportunity on Premier League match. All bookmakers are reputable with good liquidity.",
+          recommendation: "PROCEED",
+          riskFactors: ["Line movement possible", "Account limits may apply"],
+          confidence: 85,
+        },
+      },
+      expires_at: expiresIn48h.toISOString(),
+      status: "open",
+      user_id: userId,
+    });
+  }
+
+  if (
+    scanType === "value_bets" ||
+    scanType === "betting" ||
+    scanType === "all"
+  ) {
+    demoOpps.push({
+      id: `demo-vb-${Date.now()}`,
+      category: "value_bet",
+      subcategory: "value_bet",
+      title: "Man City vs Liverpool - Man City Win @ 1.95",
+      description:
+        "Value bet: Man City has 58% model probability vs 51% implied. Expected value: +13.7%",
+      confidence_score: 78,
+      expected_value: 13.7,
+      data: {
+        event: "Man City vs Liverpool",
+        selection: "Man City Win",
+        bookmaker: "Betfair",
+        bookmakerOdds: 1.95,
+        impliedProbability: 51.3,
+        modelProbability: 58.0,
+        expectedValue: 13.7,
+        suggestedStake: 25,
+        sport: "soccer_epl",
+        isDemo: true,
+        aiAnalysis: {
+          summary:
+            "Historical data suggests bookmakers undervalue home advantage in big matches. Model factors in recent form.",
+          recommendation: "PROCEED",
+          riskFactors: ["Key player injuries", "Weather conditions"],
+          confidence: 78,
+        },
+      },
+      expires_at: expiresIn48h.toISOString(),
+      status: "open",
+      user_id: userId,
+    });
+  }
+
+  if (
+    scanType === "matched_betting" ||
+    scanType === "betting" ||
+    scanType === "all"
+  ) {
+    demoOpps.push({
+      id: `demo-mb-${Date.now()}`,
+      category: "value_bet",
+      subcategory: "matched_betting",
+      title: "Bet365 - £50 Free Bet New Customer Offer",
+      description:
+        "SNR free bet opportunity: Expected profit £42.50. Risk level: low. Time to complete: ~30 mins",
+      confidence_score: 95,
+      expected_value: 42.5,
+      data: {
+        promotion: {
+          id: "demo-promo-1",
+          bookmaker: "Bet365",
+          type: "free_bet_snr",
+          title: "£50 Free Bet New Customer Offer",
+          value: 50,
+          expectedValue: 42.5,
+          isNewCustomer: true,
+        },
+        strategy: "stake_not_returned",
+        expectedProfit: 42.5,
+        profitRate: 0.85,
+        steps: [
+          "Open Bet365 account",
+          "Place qualifying bet",
+          "Lay on Betfair Exchange",
+          "Receive free bet",
+          "Use free bet on high odds selection",
+          "Lay on exchange to lock in profit",
+        ],
+        requirements: ["Valid ID", "UK resident", "18+"],
+        riskLevel: "low",
+        timeToComplete: 30,
+        isDemo: true,
+        aiAnalysis: {
+          summary:
+            "Classic matched betting opportunity with one of the most reliable bookmakers. 85% retention rate typical for SNR bets.",
+          recommendation: "PROCEED",
+          riskFactors: ["Gubbing risk after multiple offers"],
+          confidence: 95,
+        },
+      },
+      expires_at: expiresIn24h.toISOString(),
+      status: "open",
+      user_id: userId,
+    });
+  }
+
+  // Stock demo opportunities
+  if (scanType === "stocks" || scanType === "all") {
+    demoOpps.push({
+      id: `demo-stock-${Date.now()}`,
+      category: "stock",
+      subcategory: "UK",
+      title: "SHEL.L - Strong Bullish Signal",
+      description:
+        "Shell PLC showing strong momentum with RSI breakout, MACD crossover, and above-average volume. +3.2% expected move.",
+      confidence_score: 72,
+      expected_value: 3.2,
+      data: {
+        symbol: "SHEL.L",
+        name: "Shell PLC",
+        market: "UK",
+        currentPrice: 2534.5,
+        priceChange: 45.2,
+        priceChangePercent: 1.81,
+        signals: {
+          rsi: "bullish",
+          macd: "bullish",
+          volume: "high",
+          trend: "uptrend",
+        },
+        overallSignal: "strong_bullish",
+        technicals: {
+          rsi: 62,
+          macd: 12.5,
+          sma20: 2480,
+          sma50: 2420,
+        },
+        volumeRatio: 1.45,
+        fiftyTwoWeekPosition: 0.78,
+        suggestedAction: "BUY",
+        isDemo: true,
+        aiAnalysis: {
+          summary:
+            "Energy sector showing strength amid supply concerns. Technical setup suggests continued momentum.",
+          recommendation: "BUY",
+          riskFactors: ["Oil price volatility", "Geopolitical risk"],
+          confidence: 72,
+        },
+      },
+      expires_at: expiresIn24h.toISOString(),
+      status: "open",
+      user_id: userId,
+    });
+  }
+
+  // Crypto demo opportunities
+  if (scanType === "crypto" || scanType === "all") {
+    demoOpps.push({
+      id: `demo-crypto-${Date.now()}`,
+      category: "crypto",
+      subcategory: "funding_rate",
+      title: "ETHUSDT - Short 45% APY",
+      description:
+        "Funding rate opportunity: Go short on ETH. Current rate 0.05% per 8h (45.6% annualized). Risk: Medium",
+      confidence_score: 68,
+      expected_value: 45.6,
+      data: {
+        symbol: "ETHUSDT",
+        asset: "ETH",
+        currentRate: 0.05,
+        annualizedRate: 45.6,
+        direction: "short",
+        markPrice: 3245.5,
+        nextFundingTime: expiresIn24h.toISOString(),
+        riskLevel: "medium",
+        suggestedSize: 1000,
+        isDemo: true,
+        aiAnalysis: {
+          summary:
+            "Elevated funding rates suggest overleveraged long positions. Delta-neutral strategy recommended.",
+          recommendation: "PROCEED_WITH_CAUTION",
+          riskFactors: ["Funding rate can flip", "Liquidation risk"],
+          confidence: 68,
+        },
+      },
+      expires_at: expiresIn24h.toISOString(),
+      status: "open",
+      user_id: userId,
+    });
+  }
+
+  return demoOpps;
+}
+
 // POST /api/scanner/run - Trigger a scan
 export async function POST(request: NextRequest) {
   try {
@@ -94,15 +334,20 @@ export async function POST(request: NextRequest) {
     // Check tier limits
     const dailyLimit = TIER_LIMITS[userTier];
 
+    // For free tier, return demo opportunities to show what the product can do
     if (dailyLimit === 0) {
-      return NextResponse.json(
-        {
-          error:
-            "Free tier does not include scanning. Please upgrade to Starter or higher.",
-          code: "TIER_LIMIT_FREE",
-        },
-        { status: 403 },
-      );
+      const demoOpportunities = generateDemoOpportunities(scanType, userId);
+      return NextResponse.json({
+        success: true,
+        scanType,
+        timestamp: new Date().toISOString(),
+        opportunities: demoOpportunities,
+        count: demoOpportunities.length,
+        aiAnalysisCount: demoOpportunities.length,
+        alertsSent: 0,
+        isDemo: true,
+        message: `Demo mode: Showing ${demoOpportunities.length} sample opportunities. Upgrade to scan live markets.`,
+      });
     }
 
     // Check usage for the day (if not unlimited)
