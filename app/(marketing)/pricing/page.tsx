@@ -1,17 +1,14 @@
-import { Metadata } from "next";
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { BRAND_CONFIG } from "@/lib/brand-config";
-
-export const metadata: Metadata = {
-  title: `Pricing - ${BRAND_CONFIG.name}`,
-  description:
-    "Simple, transparent pricing for TradeSmart. Start free, upgrade when ready.",
-};
 
 const tiers = [
   {
     name: "Free",
-    price: "£0",
+    monthlyPrice: 0,
+    yearlyPrice: 0,
     period: "forever",
     description: "Try the scanner with sample data",
     features: [
@@ -26,7 +23,8 @@ const tiers = [
   },
   {
     name: "Starter",
-    price: "£29",
+    monthlyPrice: 19,
+    yearlyPrice: 190,
     period: "/month",
     description: "Find value in the betting markets",
     features: [
@@ -42,7 +40,8 @@ const tiers = [
   },
   {
     name: "Pro",
-    price: "£79",
+    monthlyPrice: 49,
+    yearlyPrice: 490,
     period: "/month",
     description: "Scan all markets with AI insights",
     features: [
@@ -60,7 +59,8 @@ const tiers = [
   },
   {
     name: "Unlimited",
-    price: "£199",
+    monthlyPrice: 149,
+    yearlyPrice: 1490,
     period: "/month",
     description: "Maximum power for professionals",
     features: [
@@ -116,6 +116,26 @@ const faqs = [
 ];
 
 export default function PricingPage() {
+  const [isAnnual, setIsAnnual] = useState(false);
+
+  const getPrice = (tier: (typeof tiers)[0]) => {
+    if (tier.monthlyPrice === 0) return "£0";
+    if (isAnnual) {
+      return `£${tier.yearlyPrice}`;
+    }
+    return `£${tier.monthlyPrice}`;
+  };
+
+  const getPeriod = (tier: (typeof tiers)[0]) => {
+    if (tier.monthlyPrice === 0) return "forever";
+    return isAnnual ? "/year" : "/month";
+  };
+
+  const getHref = (tier: (typeof tiers)[0]) => {
+    if (tier.monthlyPrice === 0) return tier.href;
+    return isAnnual ? `${tier.href}&billing=annual` : tier.href;
+  };
+
   return (
     <div className="flex flex-col">
       {/* Pricing Header */}
@@ -128,6 +148,39 @@ export default function PricingPage() {
             Start with a free demo. Upgrade when you&apos;re ready to scan live
             markets with real-time alerts.
           </p>
+
+          {/* Billing Toggle */}
+          <div className="mt-10 flex items-center justify-center gap-4">
+            <span
+              className={`text-sm font-medium ${!isAnnual ? "text-foreground" : "text-muted-foreground"}`}
+            >
+              Monthly
+            </span>
+            <button
+              onClick={() => setIsAnnual(!isAnnual)}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
+                isAnnual ? "bg-primary" : "bg-muted"
+              }`}
+              role="switch"
+              aria-checked={isAnnual}
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-background shadow ring-0 transition-transform ${
+                  isAnnual ? "translate-x-5" : "translate-x-0"
+                }`}
+              />
+            </button>
+            <span
+              className={`text-sm font-medium ${isAnnual ? "text-foreground" : "text-muted-foreground"}`}
+            >
+              Annual
+            </span>
+            {isAnnual && (
+              <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                Save 2 months
+              </span>
+            )}
+          </div>
         </div>
       </section>
 
@@ -157,11 +210,16 @@ export default function PricingPage() {
                     {tier.description}
                   </p>
                   <div className="mt-4 flex items-baseline">
-                    <span className="text-4xl font-bold">{tier.price}</span>
+                    <span className="text-4xl font-bold">{getPrice(tier)}</span>
                     <span className="ml-1 text-muted-foreground">
-                      {tier.period}
+                      {getPeriod(tier)}
                     </span>
                   </div>
+                  {isAnnual && tier.monthlyPrice > 0 && (
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      £{(tier.yearlyPrice / 12).toFixed(0)}/mo billed annually
+                    </p>
+                  )}
                   <ul className="mt-6 space-y-3">
                     {tier.features.map((feature) => (
                       <li
@@ -184,7 +242,7 @@ export default function PricingPage() {
                     ))}
                   </ul>
                   <Link
-                    href={tier.href}
+                    href={getHref(tier)}
                     className={`mt-8 flex h-11 w-full items-center justify-center rounded-md text-sm font-medium transition-colors ${
                       tier.highlighted
                         ? "bg-primary text-primary-foreground hover:bg-primary/90"

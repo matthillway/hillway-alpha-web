@@ -180,27 +180,66 @@ const steps = [
   },
 ];
 
-const testimonials = [
+const trustBadges = [
   {
-    quote:
-      "TradeSmart found arbitrage opportunities I was missing manually. Paid for itself in the first week.",
-    author: "James T.",
-    role: "Professional Bettor",
-    avatar: "JT",
+    icon: (
+      <svg
+        className="h-8 w-8"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+        />
+      </svg>
+    ),
+    title: "256-bit SSL Encryption",
+    description: "Your data is protected with bank-level security",
   },
   {
-    quote:
-      "The AI scoring is spot on. I only act on 90%+ confidence signals now and my win rate has doubled.",
-    author: "Sarah K.",
-    role: "Day Trader",
-    avatar: "SK",
+    icon: (
+      <svg
+        className="h-8 w-8"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"
+        />
+      </svg>
+    ),
+    title: "Secure Payments via Stripe",
+    description: "Industry-leading payment processing",
   },
   {
-    quote:
-      "Finally one dashboard for all my market scanning. The crypto funding rate alerts alone are worth the subscription.",
-    author: "Michael R.",
-    role: "Crypto Investor",
-    avatar: "MR",
+    icon: (
+      <svg
+        className="h-8 w-8"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3"
+        />
+      </svg>
+    ),
+    title: "Cancel Anytime",
+    description: "No long-term contracts or hidden fees",
   },
 ];
 
@@ -496,58 +535,72 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Social Proof Section */}
+      {/* Trust & Security Section */}
       <section className="bg-muted/30 px-4 py-20 md:px-6 md:py-28">
         <div className="container mx-auto">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold md:text-4xl">
-              Trusted by traders and bettors
+              Built for security and trust
             </h2>
             <p className="mt-4 text-muted-foreground">
-              See how others are using TradeSmart to find their edge.
+              Your data and payments are protected with industry-leading
+              security.
             </p>
           </div>
 
           <div className="mt-16 grid gap-8 md:grid-cols-3">
-            {testimonials.map((testimonial) => (
+            {trustBadges.map((badge) => (
               <div
-                key={testimonial.author}
-                className="rounded-lg border-2 bg-card p-6"
+                key={badge.title}
+                className="flex flex-col items-center rounded-lg border-2 bg-card p-8 text-center"
               >
-                <div
-                  className="flex items-center gap-1"
-                  role="img"
-                  aria-label="5 out of 5 stars"
-                >
-                  {[...Array(5)].map((_, i) => (
-                    <svg
-                      key={i}
-                      className="h-5 w-5 fill-primary text-primary"
-                      viewBox="0 0 20 20"
-                      aria-hidden="true"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  {badge.icon}
                 </div>
-                <blockquote className="mt-4 text-sm leading-relaxed">
-                  &ldquo;{testimonial.quote}&rdquo;
-                </blockquote>
-                <div className="mt-6 flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
-                    {testimonial.avatar}
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium">
-                      {testimonial.author}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {testimonial.role}
-                    </div>
-                  </div>
-                </div>
+                <h3 className="mt-4 text-lg font-semibold">{badge.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {badge.description}
+                </p>
               </div>
             ))}
+          </div>
+
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-8 border-t pt-12">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <svg
+                className="h-6 w-6"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-label="Stripe logo"
+              >
+                <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z" />
+              </svg>
+              <span className="text-sm font-medium">Powered by Stripe</span>
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <svg
+                className="h-6 w-6"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-label="Lock icon"
+              >
+                <path d="M12 1C8.676 1 6 3.676 6 7v2H4v14h16V9h-2V7c0-3.324-2.676-6-6-6zm0 2c2.276 0 4 1.724 4 4v2H8V7c0-2.276 1.724-4 4-4zm0 10c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z" />
+              </svg>
+              <span className="text-sm font-medium">
+                SOC 2 Compliant Infrastructure
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <svg
+                className="h-6 w-6"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-label="GDPR compliant"
+              >
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+              </svg>
+              <span className="text-sm font-medium">GDPR Compliant</span>
+            </div>
           </div>
         </div>
       </section>

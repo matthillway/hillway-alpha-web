@@ -319,7 +319,7 @@ describe("DashboardPage", () => {
     renderWithProviders(<DashboardPage />);
 
     await waitFor(() => {
-      expect(screen.getByText("Betting Arbitrage")).toBeInTheDocument();
+      expect(screen.getByText("Betting Scanners")).toBeInTheDocument();
       expect(screen.getByText("Stock Momentum")).toBeInTheDocument();
       expect(screen.getByText("Crypto Funding")).toBeInTheDocument();
     });
