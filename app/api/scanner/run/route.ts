@@ -5,8 +5,10 @@ import { v4 as uuidv4 } from "uuid";
 // Scanner imports
 import { createMomentumScanner } from "@/lib/scanners/stocks/momentum";
 import { createFundingRateScanner } from "@/lib/scanners/crypto/funding-rates";
-// Arbitrage scanner requires ODDS_API_KEY
+// Betting scanners
 import { createArbitrageScanner } from "@/lib/scanners/betting/arbitrage";
+import { createValueBetScanner } from "@/lib/scanners/betting/value-bets";
+import { createMatchedBettingScanner } from "@/lib/scanners/betting/matched-betting";
 import { createOddsApiClient } from "@/lib/scanner-api/odds-api";
 // Real-time email alerts
 import {
@@ -14,9 +16,17 @@ import {
   getUsersForRealtimeAlerts,
   type Opportunity as NotificationOpportunity,
 } from "@/lib/email/send-notification";
+// AI Analysis
+import {
+  analyzeOpportunity,
+  shouldAnalyze,
+  type AIAnalysis,
+} from "@/lib/ai/analyze-opportunity";
 
 // Minimum confidence to trigger realtime email alerts (70%+)
 const MIN_CONFIDENCE_FOR_ALERTS = 70;
+// Minimum confidence to trigger AI analysis (70%+)
+const MIN_CONFIDENCE_FOR_AI_ANALYSIS = 70;
 
 // Create Supabase client with service role for inserts
 function getSupabaseClient() {
@@ -32,7 +42,8 @@ const TIER_LIMITS: Record<string, number> = {
   free: 0, // No scans for free users
   starter: 100, // 100 scans per day
   pro: 500, // 500 scans per day
-  unlimited: -1, // Unlimited
+  enterprise: -1, // Unlimited
+  unlimited: -1, // Alias for enterprise (backwards compatibility)
 };
 
 interface DbOpportunity {
@@ -64,7 +75,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate scan type
-    const validTypes = ["arbitrage", "value_bets", "stocks", "crypto", "all"];
+    const validTypes = [
+      "arbitrage",
+      "value_bets",
+      "matched_betting",
+      "betting", // All betting scanners combined
+      "stocks",
+      "crypto",
+      "all",
+    ];
     if (!validTypes.includes(scanType)) {
       return NextResponse.json(
         { error: `Invalid scanType. Must be one of: ${validTypes.join(", ")}` },
@@ -127,7 +146,14 @@ export async function POST(request: NextRequest) {
     const errors: string[] = [];
 
     // Determine which scanners to run
-    const runArbitrage = scanType === "arbitrage" || scanType === "all";
+    const runArbitrage =
+      scanType === "arbitrage" || scanType === "betting" || scanType === "all";
+    const runValueBets =
+      scanType === "value_bets" || scanType === "betting" || scanType === "all";
+    const runMatchedBetting =
+      scanType === "matched_betting" ||
+      scanType === "betting" ||
+      scanType === "all";
     const runStocks = scanType === "stocks" || scanType === "all";
     const runCrypto = scanType === "crypto" || scanType === "all";
 
@@ -179,6 +205,119 @@ export async function POST(request: NextRequest) {
       } catch (err) {
         console.error("Arbitrage scan error:", err);
         errors.push(`Arbitrage scan failed: ${(err as Error).message}`);
+      }
+    }
+
+    // Run value bets scanner (requires ODDS_API_KEY)
+    if (runValueBets) {
+      try {
+        if (!process.env.ODDS_API_KEY) {
+          errors.push(
+            "Value bets scanner unavailable: ODDS_API_KEY not configured",
+          );
+        } else {
+          const oddsClient = createOddsApiClient();
+          const valueBetScanner = createValueBetScanner(oddsClient, {
+            minEdge: 3.0,
+            minConfidence: 60,
+            maxHoursAhead: 48,
+            bankroll: 1000,
+            kellyFraction: 0.25,
+          });
+
+          const valueBetOpportunities = await valueBetScanner.scan([
+            "soccer_epl",
+            "soccer_uefa_champs_league",
+          ]);
+
+          for (const vb of valueBetOpportunities) {
+            const expiresAt = new Date(vb.commenceTime);
+            opportunities.push({
+              id: uuidv4(),
+              category: "value_bet",
+              subcategory: "value_bet",
+              title: `${vb.event} - ${vb.selection} @ ${vb.bookmakerOdds.toFixed(2)}`,
+              description: `Value bet: ${vb.selection} has ${vb.modelProbability.toFixed(1)}% model probability vs ${vb.impliedProbability.toFixed(1)}% implied. Expected value: +${vb.expectedValue.toFixed(1)}%`,
+              confidence_score: vb.confidence,
+              expected_value: vb.suggestedStake * (vb.expectedValue / 100),
+              data: {
+                event: vb.event,
+                selection: vb.selection,
+                bookmaker: vb.bookmaker,
+                bookmakerOdds: vb.bookmakerOdds,
+                impliedProbability: vb.impliedProbability,
+                modelProbability: vb.modelProbability,
+                expectedValue: vb.expectedValue,
+                suggestedStake: vb.suggestedStake,
+                sport: vb.sport,
+              },
+              expires_at: expiresAt.toISOString(),
+              status: "open",
+              user_id: userId || null,
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Value bets scan error:", err);
+        errors.push(`Value bets scan failed: ${(err as Error).message}`);
+      }
+    }
+
+    // Run matched betting scanner
+    if (runMatchedBetting) {
+      try {
+        const matchedBettingScanner = createMatchedBettingScanner({
+          includeSignupOffers: true,
+          includeReloadOffers: true,
+          minExpectedValue: 0,
+          exchangeCommission: 0.02,
+        });
+
+        // Initialize accounts (in production, would load from database)
+        await matchedBettingScanner.loadAccounts();
+
+        const matchedBettingOpportunities =
+          await matchedBettingScanner.getTopOpportunities(10);
+
+        for (const mb of matchedBettingOpportunities) {
+          // Matched betting opportunities don't have a fixed expiry, set 7 days
+          const expiresAt = new Date();
+          expiresAt.setDate(expiresAt.getDate() + 7);
+
+          opportunities.push({
+            id: uuidv4(),
+            category: "value_bet", // Using value_bet category for betting opportunities
+            subcategory: "matched_betting",
+            title: `${mb.promotion.bookmaker} - ${mb.promotion.title}`,
+            description: `${mb.strategy.replace("_", " ")} opportunity: Expected profit £${mb.expectedProfit.toFixed(2)}. Risk level: ${mb.riskLevel}. Time to complete: ~${mb.timeToComplete} mins`,
+            confidence_score: mb.confidence,
+            expected_value: mb.expectedProfit,
+            data: {
+              promotion: {
+                id: mb.promotion.id,
+                bookmaker: mb.promotion.bookmaker,
+                type: mb.promotion.type,
+                title: mb.promotion.title,
+                value: mb.promotion.value,
+                expectedValue: mb.promotion.expectedValue,
+                isNewCustomer: mb.promotion.isNewCustomer,
+              },
+              strategy: mb.strategy,
+              expectedProfit: mb.expectedProfit,
+              profitRate: mb.profitRate,
+              steps: mb.steps,
+              requirements: mb.requirements,
+              riskLevel: mb.riskLevel,
+              timeToComplete: mb.timeToComplete,
+            },
+            expires_at: expiresAt.toISOString(),
+            status: "open",
+            user_id: userId || null,
+          });
+        }
+      } catch (err) {
+        console.error("Matched betting scan error:", err);
+        errors.push(`Matched betting scan failed: ${(err as Error).message}`);
       }
     }
 
@@ -275,6 +414,57 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Run AI analysis on high-confidence opportunities (70%+)
+    let aiAnalysisCount = 0;
+    if (opportunities.length > 0 && process.env.ANTHROPIC_API_KEY) {
+      try {
+        const highConfidenceForAI = opportunities.filter(
+          (opp) => opp.confidence_score >= MIN_CONFIDENCE_FOR_AI_ANALYSIS,
+        );
+
+        if (highConfidenceForAI.length > 0) {
+          console.log(
+            `Running AI analysis on ${highConfidenceForAI.length} high-confidence opportunities`,
+          );
+
+          // Analyze opportunities in parallel (with concurrency limit in the function)
+          const analysisPromises = highConfidenceForAI.map(async (opp) => {
+            try {
+              const analysis = await analyzeOpportunity({
+                id: opp.id,
+                category: opp.category,
+                subcategory: opp.subcategory,
+                title: opp.title,
+                description: opp.description,
+                confidence_score: opp.confidence_score,
+                expected_value: opp.expected_value,
+                data: opp.data,
+                expires_at: opp.expires_at,
+              });
+
+              // Store analysis in the opportunity's data field
+              opp.data = {
+                ...opp.data,
+                aiAnalysis: analysis,
+              };
+              aiAnalysisCount++;
+            } catch (analysisErr) {
+              console.error(
+                `AI analysis failed for opportunity ${opp.id}:`,
+                analysisErr,
+              );
+              // Don't fail the whole scan if AI analysis fails
+            }
+          });
+
+          await Promise.allSettled(analysisPromises);
+        }
+      } catch (aiError) {
+        console.error("AI analysis batch error:", aiError);
+        // Don't add to errors array - AI analysis failing shouldn't fail the scan
+      }
+    }
+
     // Insert opportunities into database
     if (opportunities.length > 0) {
       const { error: insertError } = await supabase
@@ -338,11 +528,12 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
       opportunities,
       count: opportunities.length,
+      aiAnalysisCount,
       alertsSent,
       errors: errors.length > 0 ? errors : undefined,
       message:
         opportunities.length > 0
-          ? `Found ${opportunities.length} opportunities${alertsSent > 0 ? `, sent ${alertsSent} alerts` : ""}`
+          ? `Found ${opportunities.length} opportunities${aiAnalysisCount > 0 ? ` (${aiAnalysisCount} AI analyzed)` : ""}${alertsSent > 0 ? `, sent ${alertsSent} alerts` : ""}`
           : errors.length > 0
             ? `Scan completed with errors: ${errors.join("; ")}`
             : "No opportunities found",

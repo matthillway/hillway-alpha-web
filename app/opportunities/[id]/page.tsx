@@ -6,6 +6,15 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import {
+  getExecutionGuidance,
+  getQuickTips,
+  getAvailablePlatforms,
+  getPlatformInstructions,
+  type OpportunityCategory,
+  type CategoryGuidance,
+  type Tip,
+} from "@/lib/tips";
+import {
   ArrowLeft,
   TrendingUp,
   BarChart3,
@@ -21,16 +30,47 @@ import {
   DollarSign,
   Calendar,
   Tag,
+  Brain,
+  Shield,
+  Target,
+  Zap,
+  CheckCircle2,
+  ChevronDown,
+  ChevronRight,
+  Lightbulb,
+  Info,
 } from "lucide-react";
+
+// AI Analysis types (matching lib/ai/analyze-opportunity.ts)
+interface AIAnalysis {
+  riskAssessment: {
+    level: "low" | "medium" | "high";
+    score: number;
+    factors: string[];
+  };
+  recommendedAction: {
+    action: "take" | "pass" | "monitor";
+    confidence: number;
+    reasoning: string;
+  };
+  confidenceExplanation: string;
+  potentialPitfalls: string[];
+  timing: {
+    urgency: "immediate" | "soon" | "flexible";
+    optimalWindow: string;
+  };
+  summary: string;
+}
 
 interface Opportunity {
   id: string;
   category: string;
+  subcategory?: string;
   title: string;
   description: string;
   confidence_score: number;
   expected_value: number;
-  data: Record<string, unknown>;
+  data: Record<string, unknown> & { aiAnalysis?: AIAnalysis };
   created_at: string;
   expires_at: string | null;
   status: string;
@@ -209,6 +249,49 @@ export default function OpportunityDetailPage({
       .join(" ");
   };
 
+  // AI Analysis helper functions
+  const getRiskColor = (level: string) => {
+    switch (level) {
+      case "low":
+        return "text-green-500 bg-green-500/20";
+      case "medium":
+        return "text-yellow-500 bg-yellow-500/20";
+      case "high":
+        return "text-red-500 bg-red-500/20";
+      default:
+        return "text-gray-500 bg-gray-500/20";
+    }
+  };
+
+  const getActionColor = (action: string) => {
+    switch (action) {
+      case "take":
+        return "text-green-500 bg-green-500/20";
+      case "pass":
+        return "text-red-500 bg-red-500/20";
+      case "monitor":
+        return "text-yellow-500 bg-yellow-500/20";
+      default:
+        return "text-gray-500 bg-gray-500/20";
+    }
+  };
+
+  const getUrgencyColor = (urgency: string) => {
+    switch (urgency) {
+      case "immediate":
+        return "text-red-500";
+      case "soon":
+        return "text-yellow-500";
+      case "flexible":
+        return "text-green-500";
+      default:
+        return "text-gray-500";
+    }
+  };
+
+  // Extract AI analysis from opportunity data
+  const aiAnalysis = opportunity?.data?.aiAnalysis as AIAnalysis | undefined;
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
@@ -374,47 +457,184 @@ export default function OpportunityDetailPage({
           </p>
         </div>
 
-        {/* Opportunity Data */}
-        {opportunity.data && Object.keys(opportunity.data).length > 0 && (
-          <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6">
-            <h2 className="text-lg font-semibold text-white mb-4">
-              Opportunity Details
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {Object.entries(opportunity.data).map(([key, value]) => (
-                <div
-                  key={key}
-                  className="p-4 bg-gray-800/50 rounded-lg border border-gray-700"
-                >
-                  <p className="text-gray-400 text-sm mb-1">{formatKey(key)}</p>
-                  {typeof value === "string" &&
-                  (value.startsWith("http://") ||
-                    value.startsWith("https://")) ? (
-                    <a
-                      href={value}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 hover:text-blue-400 flex items-center break-all"
+        {/* AI Analysis Section */}
+        {aiAnalysis && (
+          <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden mb-6">
+            <div className="p-6 bg-gradient-to-r from-purple-900/20 to-blue-900/20 border-b border-gray-800">
+              <div className="flex items-center space-x-2">
+                <Brain className="w-5 h-5 text-purple-500" />
+                <h2 className="text-lg font-semibold text-white">
+                  AI Analysis
+                </h2>
+                <span className="px-2 py-0.5 rounded text-xs bg-purple-500/20 text-purple-400">
+                  Powered by Claude
+                </span>
+              </div>
+            </div>
+
+            <div className="p-6">
+              {/* Summary */}
+              <div className="bg-gray-800/50 rounded-lg p-4 mb-4">
+                <p className="text-gray-300">{aiAnalysis.summary}</p>
+              </div>
+
+              {/* Risk Assessment & Recommended Action */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                {/* Risk Assessment */}
+                <div className="bg-gray-800/50 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-2">
+                      <Shield className="w-4 h-4 text-gray-400" />
+                      <span className="text-gray-400 text-sm font-medium">
+                        Risk Assessment
+                      </span>
+                    </div>
+                    <span
+                      className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${getRiskColor(aiAnalysis.riskAssessment.level)}`}
                     >
-                      {value.length > 40
-                        ? value.substring(0, 40) + "..."
-                        : value}
-                      <ExternalLink className="w-4 h-4 ml-1 flex-shrink-0" />
-                    </a>
-                  ) : typeof value === "object" ? (
-                    <pre className="text-white text-sm overflow-x-auto bg-gray-900 p-2 rounded mt-1">
-                      {JSON.stringify(value, null, 2)}
-                    </pre>
-                  ) : (
-                    <p className="text-white font-medium">
-                      {formatValue(value)}
-                    </p>
-                  )}
+                      {aiAnalysis.riskAssessment.level} (
+                      {aiAnalysis.riskAssessment.score}/10)
+                    </span>
+                  </div>
+                  <ul className="space-y-1">
+                    {aiAnalysis.riskAssessment.factors.map((factor, i) => (
+                      <li
+                        key={i}
+                        className="text-gray-400 text-sm flex items-start"
+                      >
+                        <span className="text-gray-600 mr-2">-</span>
+                        {factor}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              ))}
+
+                {/* Recommended Action */}
+                <div className="bg-gray-800/50 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-2">
+                      <Target className="w-4 h-4 text-gray-400" />
+                      <span className="text-gray-400 text-sm font-medium">
+                        Recommended Action
+                      </span>
+                    </div>
+                    <span
+                      className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${getActionColor(aiAnalysis.recommendedAction.action)}`}
+                    >
+                      {aiAnalysis.recommendedAction.action} (
+                      {aiAnalysis.recommendedAction.confidence}%)
+                    </span>
+                  </div>
+                  <p className="text-gray-400 text-sm">
+                    {aiAnalysis.recommendedAction.reasoning}
+                  </p>
+                </div>
+              </div>
+
+              {/* Timing */}
+              <div className="bg-gray-800/50 rounded-lg p-4 mb-4">
+                <div className="flex items-center space-x-2 mb-2">
+                  <Zap className="w-4 h-4 text-gray-400" />
+                  <span className="text-gray-400 text-sm font-medium">
+                    Timing
+                  </span>
+                  <span
+                    className={`text-xs font-medium capitalize ${getUrgencyColor(aiAnalysis.timing.urgency)}`}
+                  >
+                    {aiAnalysis.timing.urgency}
+                  </span>
+                </div>
+                <p className="text-gray-400 text-sm">
+                  {aiAnalysis.timing.optimalWindow}
+                </p>
+              </div>
+
+              {/* Potential Pitfalls */}
+              {aiAnalysis.potentialPitfalls.length > 0 && (
+                <div className="bg-gray-800/50 rounded-lg p-4 mb-4">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <AlertTriangle className="w-4 h-4 text-yellow-500" />
+                    <span className="text-gray-400 text-sm font-medium">
+                      Potential Pitfalls
+                    </span>
+                  </div>
+                  <ul className="space-y-1">
+                    {aiAnalysis.potentialPitfalls.map((pitfall, i) => (
+                      <li
+                        key={i}
+                        className="text-gray-400 text-sm flex items-start"
+                      >
+                        <XCircle className="w-3 h-3 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
+                        {pitfall}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Confidence Explanation */}
+              <div className="bg-gray-800/50 rounded-lg p-4">
+                <div className="flex items-center space-x-2 mb-2">
+                  <CheckCircle2 className="w-4 h-4 text-gray-400" />
+                  <span className="text-gray-400 text-sm font-medium">
+                    Confidence Explanation
+                  </span>
+                </div>
+                <p className="text-gray-400 text-sm">
+                  {aiAnalysis.confidenceExplanation}
+                </p>
+              </div>
             </div>
           </div>
         )}
+
+        {/* Opportunity Data */}
+        {opportunity.data &&
+          Object.keys(opportunity.data).filter((k) => k !== "aiAnalysis")
+            .length > 0 && (
+            <div className="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-6">
+              <h2 className="text-lg font-semibold text-white mb-4">
+                Technical Details
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {Object.entries(opportunity.data)
+                  .filter(([key]) => key !== "aiAnalysis")
+                  .map(([key, value]) => (
+                    <div
+                      key={key}
+                      className="p-4 bg-gray-800/50 rounded-lg border border-gray-700"
+                    >
+                      <p className="text-gray-400 text-sm mb-1">
+                        {formatKey(key)}
+                      </p>
+                      {typeof value === "string" &&
+                      (value.startsWith("http://") ||
+                        value.startsWith("https://")) ? (
+                        <a
+                          href={value}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:text-blue-400 flex items-center break-all"
+                        >
+                          {value.length > 40
+                            ? value.substring(0, 40) + "..."
+                            : value}
+                          <ExternalLink className="w-4 h-4 ml-1 flex-shrink-0" />
+                        </a>
+                      ) : typeof value === "object" ? (
+                        <pre className="text-white text-sm overflow-x-auto bg-gray-900 p-2 rounded mt-1">
+                          {JSON.stringify(value, null, 2)}
+                        </pre>
+                      ) : (
+                        <p className="text-white font-medium">
+                          {formatValue(value)}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
 
         {/* Action Buttons */}
         {opportunity.status === "open" && !isExpired && (
