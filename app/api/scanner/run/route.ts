@@ -412,12 +412,23 @@ export async function POST(request: NextRequest) {
         } else {
           const oddsClient = createOddsApiClient();
           const arbScanner = createArbitrageScanner(oddsClient, {
-            minMargin: 1.0,
-            maxHoursAhead: 48,
+            minMargin: 0.5, // Lowered to catch smaller opportunities
+            maxHoursAhead: 72,
             totalStake: 100,
           });
 
-          const arbOpportunities = await arbScanner.scan();
+          // Scan more sports for better coverage
+          const arbOpportunities = await arbScanner.scan([
+            "soccer_epl",
+            "soccer_uefa_champs_league",
+            "soccer_fa_cup",
+            "soccer_efl_champ",
+            "soccer_spain_la_liga",
+            "soccer_germany_bundesliga",
+            "soccer_italy_serie_a",
+            "basketball_nba",
+            "americanfootball_nfl",
+          ]);
 
           for (const arb of arbOpportunities) {
             const expiresAt = new Date(arb.commenceTime);
@@ -463,16 +474,24 @@ export async function POST(request: NextRequest) {
         } else {
           const oddsClient = createOddsApiClient();
           const valueBetScanner = createValueBetScanner(oddsClient, {
-            minEdge: 3.0,
-            minConfidence: 60,
-            maxHoursAhead: 48,
+            minEdge: 1.5, // Lowered to find more value bets
+            minConfidence: 50,
+            maxHoursAhead: 72,
             bankroll: 1000,
             kellyFraction: 0.25,
           });
 
+          // Scan more sports for better coverage
           const valueBetOpportunities = await valueBetScanner.scan([
             "soccer_epl",
             "soccer_uefa_champs_league",
+            "soccer_fa_cup",
+            "soccer_efl_champ",
+            "soccer_spain_la_liga",
+            "soccer_germany_bundesliga",
+            "soccer_italy_serie_a",
+            "basketball_nba",
+            "americanfootball_nfl",
           ]);
 
           for (const vb of valueBetOpportunities) {
@@ -635,8 +654,9 @@ export async function POST(request: NextRequest) {
             title: `${crypto.symbol} - ${crypto.direction} ${Math.abs(crypto.annualizedRate).toFixed(0)}% APY`,
             description: `Funding rate opportunity: Go ${crypto.direction} on ${crypto.asset}. Current rate ${crypto.currentRate.toFixed(4)}% per 8h (${crypto.annualizedRate.toFixed(1)}% annualized). Risk: ${crypto.riskLevel}`,
             confidence_score: crypto.confidence,
+            // EV is always positive - we go the direction that RECEIVES funding
             expected_value:
-              crypto.suggestedSize * (crypto.annualizedRate / 100),
+              crypto.suggestedSize * (Math.abs(crypto.annualizedRate) / 100),
             data: {
               symbol: crypto.symbol,
               asset: crypto.asset,
