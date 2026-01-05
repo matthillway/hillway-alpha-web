@@ -28,11 +28,6 @@ function SelectPlanContent() {
         return;
       }
       setUser(session.user);
-
-      // If plan is preselected, auto-redirect to checkout
-      if (preselectedPlan && preselectedPlan !== "free") {
-        handleSelectPlan(preselectedPlan);
-      }
     }
     checkUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps

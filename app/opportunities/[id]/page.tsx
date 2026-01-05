@@ -389,6 +389,7 @@ export default function OpportunityDetailPage({
             <div className="flex items-center">
               <button
                 onClick={() => router.push("/dashboard")}
+                aria-label="Back to opportunities"
                 className="text-gray-400 hover:text-white mr-4 flex items-center"
               >
                 <ArrowLeft className="w-5 h-5 mr-1" />
@@ -448,7 +449,7 @@ export default function OpportunityDetailPage({
               <div>
                 <p className="text-gray-400 text-sm mb-1">Confidence Score</p>
                 <p
-                  className={`text-3xl font-bold ${getConfidenceColor(opportunity.confidence_score)}`}
+                  className={`text-2xl sm:text-3xl font-bold ${getConfidenceColor(opportunity.confidence_score)}`}
                 >
                   {opportunity.confidence_score}%
                 </p>
@@ -465,10 +466,10 @@ export default function OpportunityDetailPage({
               <div>
                 <p className="text-gray-400 text-sm mb-1">Expected Value</p>
                 <p
-                  className={`text-3xl font-bold ${opportunity.expected_value >= 0 ? "text-green-500" : "text-red-500"}`}
+                  className={`text-2xl sm:text-3xl font-bold ${opportunity.expected_value >= 0 ? "text-green-500" : "text-red-500"}`}
                 >
-                  {opportunity.expected_value > 0 ? "+" : ""}
-                  {opportunity.expected_value.toFixed(2)}
+                  {opportunity.expected_value >= 0 ? "+" : "-"}£
+                  {Math.abs(opportunity.expected_value).toFixed(2)}
                 </p>
               </div>
               <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
@@ -651,6 +652,8 @@ export default function OpportunityDetailPage({
           <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden mb-6">
             <button
               onClick={() => toggleSection("execution")}
+              aria-expanded={expandedSections.includes("execution")}
+              aria-controls="execution-content"
               className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-800/50 transition-colors"
             >
               <div className="flex items-center space-x-3">
@@ -667,7 +670,10 @@ export default function OpportunityDetailPage({
             </button>
 
             {expandedSections.includes("execution") && (
-              <div className="px-6 pb-6 border-t border-gray-800">
+              <div
+                id="execution-content"
+                className="px-6 pb-6 border-t border-gray-800"
+              >
                 <p className="text-gray-400 my-4">{guidance.overview}</p>
 
                 {/* Step by Step */}
@@ -717,6 +723,8 @@ export default function OpportunityDetailPage({
           <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden mb-6">
             <button
               onClick={() => toggleSection("platform")}
+              aria-expanded={expandedSections.includes("platform")}
+              aria-controls="platform-content"
               className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-800/50 transition-colors"
             >
               <div className="flex items-center space-x-3">
@@ -733,14 +741,17 @@ export default function OpportunityDetailPage({
             </button>
 
             {expandedSections.includes("platform") && (
-              <div className="px-6 pb-6 border-t border-gray-800">
+              <div
+                id="platform-content"
+                className="px-6 pb-6 border-t border-gray-800"
+              >
                 {/* Platform selector */}
                 <div className="flex flex-wrap gap-2 my-4">
                   {platforms.map((platform) => (
                     <button
                       key={platform}
                       onClick={() => setSelectedPlatform(platform)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      className={`min-w-[80px] px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                         selectedPlatform === platform
                           ? "bg-blue-600 text-white"
                           : "bg-gray-800 text-gray-400 hover:text-white"
@@ -780,6 +791,8 @@ export default function OpportunityDetailPage({
           <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden mb-6">
             <button
               onClick={() => toggleSection("tips-risk")}
+              aria-expanded={expandedSections.includes("tips-risk")}
+              aria-controls="tips-risk-content"
               className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-800/50 transition-colors"
             >
               <div className="flex items-center space-x-3">
@@ -796,7 +809,10 @@ export default function OpportunityDetailPage({
             </button>
 
             {expandedSections.includes("tips-risk") && (
-              <div className="px-6 pb-6 border-t border-gray-800">
+              <div
+                id="tips-risk-content"
+                className="px-6 pb-6 border-t border-gray-800"
+              >
                 <div className="space-y-3 mt-4">
                   {guidance.riskWarnings.map((warning, idx) => (
                     <div
@@ -969,9 +985,11 @@ export default function OpportunityDetailPage({
                           <ExternalLink className="w-4 h-4 ml-1 flex-shrink-0" />
                         </a>
                       ) : typeof value === "object" ? (
-                        <pre className="text-white text-sm overflow-x-auto bg-gray-900 p-2 rounded mt-1">
-                          {JSON.stringify(value, null, 2)}
-                        </pre>
+                        <div className="overflow-x-auto">
+                          <pre className="text-white text-sm bg-gray-900 p-2 rounded mt-1">
+                            {JSON.stringify(value, null, 2)}
+                          </pre>
+                        </div>
                       ) : (
                         <p className="text-white font-medium">
                           {formatValue(value)}

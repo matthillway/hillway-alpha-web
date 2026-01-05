@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
     const totalClosed = allClosedPositions?.length || 0;
     const winRate = totalClosed > 0 ? (wins / totalClosed) * 100 : 0;
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       today: {
         opportunities: todayCount,
         byCategory: categoryCounts,
@@ -126,6 +126,13 @@ export async function GET(request: NextRequest) {
         totalPnl,
       },
     });
+
+    response.headers.set(
+      "Cache-Control",
+      "private, s-maxage=60, stale-while-revalidate=30",
+    );
+
+    return response;
   } catch (error) {
     console.error("API error:", error);
     return NextResponse.json(

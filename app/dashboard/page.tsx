@@ -80,6 +80,7 @@ export default function DashboardPage() {
   const [bettingExpanded, setBettingExpanded] = useState(false);
   const [dailyTip, setDailyTip] = useState<Tip | null>(null);
   const [quickTips, setQuickTips] = useState<Tip[]>([]);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const fetchData = useCallback(async () => {
     setRefreshing(true);
@@ -98,6 +99,8 @@ export default function DashboardPage() {
         const oppData = await opportunitiesRes.json();
         setOpportunities(oppData.opportunities || []);
       }
+
+      setLastUpdated(new Date());
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
@@ -230,7 +233,12 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div
+          role="status"
+          className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"
+        >
+          <span className="sr-only">Loading...</span>
+        </div>
       </div>
     );
   }
@@ -247,20 +255,31 @@ export default function DashboardPage() {
               </div>
               <span className="text-xl font-bold text-white">TradeSmart</span>
             </div>
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => fetchData()}
-                disabled={refreshing}
-                className="text-gray-400 hover:text-white disabled:opacity-50"
-                aria-label="Refresh data"
-              >
-                <RefreshCw
-                  className={`w-5 h-5 ${refreshing ? "animate-spin" : ""}`}
-                />
-              </button>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => fetchData()}
+                  disabled={refreshing}
+                  className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400 hover:text-white disabled:opacity-50"
+                  aria-label="Refresh data"
+                >
+                  <RefreshCw
+                    className={`w-5 h-5 ${refreshing ? "animate-spin" : ""}`}
+                  />
+                </button>
+                {lastUpdated && (
+                  <span className="text-gray-500 text-xs hidden sm:inline">
+                    Updated{" "}
+                    {lastUpdated.toLocaleTimeString("en-GB", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                )}
+              </div>
               <button
                 onClick={() => router.push("/portfolio")}
-                className="text-gray-400 hover:text-white"
+                className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400 hover:text-white"
                 aria-label="Portfolio"
                 title="Portfolio & P&L"
               >
@@ -268,7 +287,7 @@ export default function DashboardPage() {
               </button>
               <button
                 onClick={() => router.push("/guides")}
-                className="text-gray-400 hover:text-white"
+                className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400 hover:text-white"
                 aria-label="Getting Started Guide"
                 title="Getting Started Guide"
               >
@@ -277,7 +296,7 @@ export default function DashboardPage() {
               {isAdmin && (
                 <button
                   onClick={() => router.push("/admin")}
-                  className="text-yellow-500 hover:text-yellow-400"
+                  className="min-h-[44px] min-w-[44px] flex items-center justify-center text-yellow-500 hover:text-yellow-400"
                   aria-label="Admin panel"
                   title="Admin Panel"
                 >
@@ -286,21 +305,21 @@ export default function DashboardPage() {
               )}
               <button
                 onClick={() => router.push("/notifications")}
-                className="text-gray-400 hover:text-white"
+                className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400 hover:text-white"
                 aria-label="Notifications"
               >
                 <Bell className="w-5 h-5" />
               </button>
               <button
                 onClick={() => router.push("/settings")}
-                className="text-gray-400 hover:text-white"
+                className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400 hover:text-white"
                 aria-label="Settings"
               >
                 <Settings className="w-5 h-5" />
               </button>
               <button
                 onClick={handleSignOut}
-                className="text-gray-400 hover:text-white"
+                className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400 hover:text-white"
                 aria-label="Sign out"
               >
                 <LogOut className="w-5 h-5" />
@@ -322,7 +341,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
             <div className="flex items-center justify-between">
               <div>
@@ -337,7 +356,7 @@ export default function DashboardPage() {
                 <Activity className="w-6 h-6 text-blue-500" />
               </div>
             </div>
-            <div className="flex items-center mt-2 text-sm">
+            <div className="flex flex-wrap items-center mt-2 text-sm">
               {Object.entries(metrics?.today.byCategory || {}).map(
                 ([cat, count]) => (
                   <span key={cat} className="text-gray-500 mr-3">
@@ -519,8 +538,18 @@ export default function DashboardPage() {
           <div className="bg-gray-900 rounded-xl border border-gray-800">
             <div className="p-6">
               <div
+                role="button"
+                tabIndex={0}
+                aria-expanded={bettingExpanded}
+                aria-controls="betting-scanner-options"
                 className="flex items-center justify-between cursor-pointer"
                 onClick={() => setBettingExpanded(!bettingExpanded)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setBettingExpanded(!bettingExpanded);
+                  }
+                }}
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
@@ -559,9 +588,12 @@ export default function DashboardPage() {
 
             {/* Expandable Sub-options */}
             {bettingExpanded && (
-              <div className="border-t border-gray-800 p-4 space-y-3">
+              <div
+                id="betting-scanner-options"
+                className="border-t border-gray-800 p-4 space-y-3"
+              >
                 {/* Arbitrage */}
-                <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors gap-3">
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
                       <TrendingUp className="w-4 h-4 text-blue-500" />
@@ -586,7 +618,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Value Bets */}
-                <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors gap-3">
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
                       <Target className="w-4 h-4 text-purple-500" />
@@ -611,7 +643,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Matched Betting */}
-                <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors gap-3">
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
                       <Gift className="w-4 h-4 text-green-500" />
@@ -726,8 +758,16 @@ export default function DashboardPage() {
                 {opportunities.map((opp) => (
                   <div
                     key={opp.id}
+                    role="button"
+                    tabIndex={0}
                     className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors cursor-pointer"
                     onClick={() => router.push(`/opportunities/${opp.id}`)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        router.push(`/opportunities/${opp.id}`);
+                      }
+                    }}
                   >
                     <div className="flex items-center space-x-4">
                       <div

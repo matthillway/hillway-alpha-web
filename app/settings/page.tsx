@@ -297,20 +297,25 @@ export default function SettingsPage() {
               <div>
                 <div className="flex items-center space-x-2">
                   <Mail className="w-4 h-4 text-gray-400" />
-                  <p className="text-white">Email Alerts</p>
+                  <p id="email-alerts-label" className="text-white">
+                    Email Alerts
+                  </p>
                 </div>
                 <p className="text-gray-400 text-sm mt-1">
                   Receive opportunity alerts via email
                 </p>
               </div>
               <button
+                role="switch"
+                aria-checked={emailAlerts}
+                aria-labelledby="email-alerts-label"
                 onClick={() => setEmailAlerts(!emailAlerts)}
-                className={`w-12 h-6 rounded-full relative transition-colors duration-200 ${
+                className={`w-14 h-8 rounded-full relative transition-colors duration-200 ${
                   emailAlerts ? "bg-blue-500" : "bg-gray-700"
                 }`}
               >
                 <span
-                  className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-200 ${
+                  className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-all duration-200 ${
                     emailAlerts ? "right-1" : "left-1"
                   }`}
                 />
@@ -322,7 +327,9 @@ export default function SettingsPage() {
               <div>
                 <div className="flex items-center space-x-2">
                   <MessageCircle className="w-4 h-4 text-gray-400" />
-                  <p className="text-white">WhatsApp Alerts</p>
+                  <p id="whatsapp-alerts-label" className="text-white">
+                    WhatsApp Alerts
+                  </p>
                   {!canUseWhatsApp && (
                     <span className="px-2 py-0.5 text-xs bg-purple-500/20 text-purple-400 rounded-full">
                       Pro+
@@ -335,18 +342,21 @@ export default function SettingsPage() {
                 </p>
               </div>
               <button
+                role="switch"
+                aria-checked={whatsappAlerts && canUseWhatsApp}
+                aria-labelledby="whatsapp-alerts-label"
                 onClick={() =>
                   canUseWhatsApp && setWhatsappAlerts(!whatsappAlerts)
                 }
                 disabled={!canUseWhatsApp}
-                className={`w-12 h-6 rounded-full relative transition-colors duration-200 ${
+                className={`w-14 h-8 rounded-full relative transition-colors duration-200 ${
                   whatsappAlerts && canUseWhatsApp
                     ? "bg-green-500"
                     : "bg-gray-700"
                 } ${!canUseWhatsApp ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 <span
-                  className={`absolute top-1 w-4 h-4 rounded-full transition-all duration-200 ${
+                  className={`absolute top-1 w-6 h-6 rounded-full transition-all duration-200 ${
                     whatsappAlerts && canUseWhatsApp
                       ? "right-1 bg-white"
                       : "left-1 bg-gray-400"
@@ -381,10 +391,17 @@ export default function SettingsPage() {
 
             {/* Alert Frequency */}
             <div>
-              <label className="block text-sm text-gray-400 mb-2">
+              <label
+                id="alert-frequency-label"
+                className="block text-sm text-gray-400 mb-2"
+              >
                 Alert Frequency
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div
+                role="radiogroup"
+                aria-labelledby="alert-frequency-label"
+                className="grid grid-cols-2 md:grid-cols-4 gap-2"
+              >
                 {[
                   { value: "realtime", label: "Real-time" },
                   { value: "hourly", label: "Hourly" },
@@ -393,6 +410,8 @@ export default function SettingsPage() {
                 ].map((option) => (
                   <button
                     key={option.value}
+                    role="radio"
+                    aria-checked={alertFrequency === option.value}
                     onClick={() =>
                       setAlertFrequency(option.value as AlertFrequency)
                     }
@@ -448,13 +467,20 @@ export default function SettingsPage() {
                 await supabase.auth.resetPasswordForEmail(user?.email || "", {
                   redirectTo: `${window.location.origin}/auth/callback?next=/settings`,
                 });
-                alert("Password reset email sent!");
+                setSaveSuccess(true);
+                setTimeout(() => setSaveSuccess(false), 3000);
               }}
               className="w-full sm:w-auto"
             >
               <Mail className="w-4 h-4 mr-2" />
               Reset Password
             </Button>
+            {saveSuccess && (
+              <p className="text-green-500 text-sm mt-2 flex items-center">
+                <Check className="w-4 h-4 mr-1" />
+                Password reset email sent!
+              </p>
+            )}
           </div>
         </div>
       </main>

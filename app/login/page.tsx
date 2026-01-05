@@ -38,9 +38,9 @@ function LoginForm() {
 
   if (!supabaseUrl || !supabaseAnonKey) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gray-950 py-12 px-4">
         <div className="max-w-md w-full text-center">
-          <p className="text-red-600">
+          <p className="text-red-400">
             Configuration error. Please try again later.
           </p>
         </div>
@@ -260,11 +260,11 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-950 py-12 px-4">
       <div className="max-w-md w-full">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+          <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
             <svg
               width="24"
               height="24"
@@ -282,42 +282,48 @@ function LoginForm() {
               <circle cx="21" cy="8" r="2" fill="currentColor" />
             </svg>
           </div>
-          <span className="font-semibold text-xl text-gray-900">
-            TradeSmart
-          </span>
+          <span className="font-semibold text-xl text-white">TradeSmart</span>
         </Link>
 
         {/* Card */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
-          <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">
+        <div className="bg-gray-900 border border-gray-800 rounded-xl p-8">
+          <h1 className="text-2xl font-bold text-white text-center mb-2">
             {isSignup ? "Create your account" : "Welcome back"}
           </h1>
-          <p className="text-gray-500 text-center mb-6">
+          <p className="text-gray-400 text-center mb-6">
             {isSignup
               ? "Start your free trial today"
               : "Sign in to your account"}
           </p>
 
           {/* Auth Mode Toggle */}
-          <div className="flex rounded-lg bg-gray-100 p-1 mb-6">
+          <div
+            role="tablist"
+            aria-label="Authentication method"
+            className="flex rounded-lg bg-gray-800 p-1 mb-6"
+          >
             <button
               type="button"
+              role="tab"
+              aria-selected={authMode === "password"}
               onClick={() => setAuthMode("password")}
               className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
                 authMode === "password"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "bg-gray-700 text-white shadow-sm"
+                  : "text-gray-400 hover:text-gray-200"
               }`}
             >
               Password
             </button>
             <button
               type="button"
+              role="tab"
+              aria-selected={authMode === "magic-link"}
               onClick={() => setAuthMode("magic-link")}
               className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
                 authMode === "magic-link"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "bg-gray-700 text-white shadow-sm"
+                  : "text-gray-400 hover:text-gray-200"
               }`}
             >
               Magic Link
@@ -332,7 +338,7 @@ function LoginForm() {
           >
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-2"
             >
               Email address
             </label>
@@ -343,7 +349,7 @@ function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent mb-4"
+              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
             />
 
             {/* Password fields (only for password mode) */}
@@ -351,7 +357,7 @@ function LoginForm() {
               <>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-gray-300 mb-2"
                 >
                   Password
                 </label>
@@ -363,7 +369,7 @@ function LoginForm() {
                   placeholder="••••••••"
                   required
                   minLength={6}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent mb-4"
+                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
                 />
 
                 {/* Confirm password (only for signup) */}
@@ -371,7 +377,7 @@ function LoginForm() {
                   <>
                     <label
                       htmlFor="confirmPassword"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                      className="block text-sm font-medium text-gray-300 mb-2"
                     >
                       Confirm password
                     </label>
@@ -383,7 +389,7 @@ function LoginForm() {
                       placeholder="••••••••"
                       required
                       minLength={6}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent mb-4"
+                      className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
                     />
                   </>
                 )}
@@ -394,7 +400,7 @@ function LoginForm() {
                     <button
                       type="button"
                       onClick={handleForgotPassword}
-                      className="text-sm text-emerald-600 hover:text-emerald-700"
+                      className="text-sm text-blue-400 hover:text-blue-300"
                     >
                       Forgot password?
                     </button>
@@ -408,10 +414,10 @@ function LoginForm() {
               <div className="mb-4">
                 <label
                   htmlFor="discountCode"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-gray-300 mb-2"
                 >
                   Discount code{" "}
-                  <span className="text-gray-400 font-normal">(optional)</span>
+                  <span className="text-gray-500 font-normal">(optional)</span>
                 </label>
                 <div className="relative">
                   <input
@@ -426,24 +432,24 @@ function LoginForm() {
                     }}
                     onBlur={() => validateDiscountCode(discountCode)}
                     placeholder="Enter code"
-                    className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-transparent pr-10 ${
+                    className={`w-full px-4 py-3 bg-gray-800 border text-white placeholder-gray-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10 ${
                       discountValidation.status === "valid"
-                        ? "border-emerald-500 bg-emerald-50"
+                        ? "border-green-500 bg-green-900/20"
                         : discountValidation.status === "invalid"
-                          ? "border-red-300 bg-red-50"
-                          : "border-gray-300"
+                          ? "border-red-500 bg-red-900/20"
+                          : "border-gray-700"
                     }`}
                   />
                   {/* Validation indicator */}
                   {discountValidation.status === "validating" && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                      <div className="w-5 h-5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                     </div>
                   )}
                   {discountValidation.status === "valid" && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2">
                       <svg
-                        className="w-5 h-5 text-emerald-600"
+                        className="w-5 h-5 text-green-500"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -460,7 +466,7 @@ function LoginForm() {
                   {discountValidation.status === "invalid" && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2">
                       <svg
-                        className="w-5 h-5 text-red-500"
+                        className="w-5 h-5 text-red-400"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -480,8 +486,8 @@ function LoginForm() {
                   <p
                     className={`mt-2 text-sm ${
                       discountValidation.status === "valid"
-                        ? "text-emerald-600"
-                        : "text-red-500"
+                        ? "text-green-400"
+                        : "text-red-400"
                     }`}
                   >
                     {discountValidation.message}
@@ -506,8 +512,8 @@ function LoginForm() {
             <div
               className={`mt-6 p-4 rounded-xl text-sm ${
                 message.type === "success"
-                  ? "bg-emerald-50 text-emerald-700"
-                  : "bg-red-50 text-red-700"
+                  ? "bg-green-900/30 text-green-400 border border-green-800"
+                  : "bg-red-900/30 text-red-400 border border-red-800"
               }`}
             >
               {message.text}
@@ -516,13 +522,13 @@ function LoginForm() {
         </div>
 
         {/* Toggle */}
-        <p className="text-center text-gray-500 mt-6">
+        <p className="text-center text-gray-400 mt-6">
           {isSignup ? (
             <>
               Already have an account?{" "}
               <Link
                 href="/login"
-                className="text-emerald-600 hover:text-emerald-700 font-medium"
+                className="text-blue-400 hover:text-blue-300 font-medium"
               >
                 Sign in
               </Link>
@@ -532,7 +538,7 @@ function LoginForm() {
               Don&apos;t have an account?{" "}
               <Link
                 href="/login?signup=true"
-                className="text-emerald-600 hover:text-emerald-700 font-medium"
+                className="text-blue-400 hover:text-blue-300 font-medium"
               >
                 Sign up
               </Link>
@@ -548,8 +554,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+        <div className="min-h-screen flex items-center justify-center bg-gray-950">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

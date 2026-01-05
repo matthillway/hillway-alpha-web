@@ -51,12 +51,19 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       opportunities: data || [],
       total: count || 0,
       limit,
       offset,
     });
+
+    response.headers.set(
+      "Cache-Control",
+      "private, s-maxage=30, stale-while-revalidate=15",
+    );
+
+    return response;
   } catch (error) {
     console.error("API error:", error);
     return NextResponse.json(

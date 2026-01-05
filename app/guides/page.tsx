@@ -1010,8 +1010,12 @@ function PartnerCard({
     url: string;
   };
 }) {
+  const isComingSoon = partner.url === "#";
+
   return (
-    <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700 hover:border-gray-600 transition-all hover:bg-gray-800/70 flex flex-col h-full">
+    <div
+      className={`bg-gray-800/50 rounded-xl p-5 border border-gray-700 transition-all flex flex-col h-full ${isComingSoon ? "opacity-70" : "hover:border-gray-600 hover:bg-gray-800/70"}`}
+    >
       {/* Header with Icon */}
       <div className="flex items-start space-x-3 mb-3">
         <div
@@ -1020,7 +1024,14 @@ function PartnerCard({
           {partner.icon}
         </div>
         <div className="flex-1 min-w-0">
-          <h4 className="text-white font-semibold text-lg">{partner.name}</h4>
+          <div className="flex items-center gap-2">
+            <h4 className="text-white font-semibold text-lg">{partner.name}</h4>
+            {isComingSoon && (
+              <span className="px-2 py-0.5 text-xs bg-yellow-500/20 text-yellow-400 rounded-full font-medium">
+                Coming Soon
+              </span>
+            )}
+          </div>
           <p className="text-gray-400 text-sm">{partner.tagline}</p>
         </div>
       </div>
@@ -1036,15 +1047,21 @@ function PartnerCard({
       </div>
 
       {/* Sign Up Button */}
-      <a
-        href={partner.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="w-full flex items-center justify-center space-x-2 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors"
-      >
-        <span>Sign Up</span>
-        <ExternalLink className="w-4 h-4" />
-      </a>
+      {isComingSoon ? (
+        <div className="w-full flex items-center justify-center space-x-2 py-2.5 bg-gray-700 text-gray-400 text-sm font-medium rounded-lg cursor-not-allowed">
+          <span>Coming Soon</span>
+        </div>
+      ) : (
+        <a
+          href={partner.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full flex items-center justify-center space-x-2 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors"
+        >
+          <span>Sign Up</span>
+          <ExternalLink className="w-4 h-4" />
+        </a>
+      )}
     </div>
   );
 }

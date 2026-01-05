@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
@@ -25,17 +26,32 @@ import {
   Link2,
   ChevronRight,
 } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-} from "recharts";
+
+// Lazy load Recharts components
+const ResponsiveContainer = dynamic(
+  () => import("recharts").then((mod) => mod.ResponsiveContainer),
+  { ssr: false },
+);
+const AreaChart = dynamic(
+  () => import("recharts").then((mod) => mod.AreaChart),
+  { ssr: false },
+);
+const Area = dynamic(() => import("recharts").then((mod) => mod.Area), {
+  ssr: false,
+});
+const XAxis = dynamic(() => import("recharts").then((mod) => mod.XAxis), {
+  ssr: false,
+});
+const YAxis = dynamic(() => import("recharts").then((mod) => mod.YAxis), {
+  ssr: false,
+});
+const CartesianGrid = dynamic(
+  () => import("recharts").then((mod) => mod.CartesianGrid),
+  { ssr: false },
+);
+const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip), {
+  ssr: false,
+});
 
 interface Portfolio {
   id: string;
@@ -109,6 +125,7 @@ export default function PortfolioPage() {
   const [recentTrades, setRecentTrades] = useState<Trade[]>([]);
   const [timeRange, setTimeRange] = useState<TimeRange>("daily");
   const [linkedAccounts, setLinkedAccounts] = useState<LinkedAccount[]>([]);
+  const [chartLoaded, setChartLoaded] = useState(false);
 
   // Modal states
   const [showSetupModal, setShowSetupModal] = useState(false);
@@ -180,6 +197,11 @@ export default function PortfolioPage() {
         .catch((err) => console.error("Error fetching linked accounts:", err));
     }
   }, [user?.id, fetchData]);
+
+  // Trigger chart loaded after mount to enable lazy loaded components
+  useEffect(() => {
+    setChartLoaded(true);
+  }, []);
 
   const handleSetupPortfolio = async () => {
     const balance = parseFloat(openingBalance);
@@ -393,8 +415,8 @@ export default function PortfolioPage() {
                 size="sm"
                 onClick={() => setShowTradeModal(true)}
               >
-                <Plus className="w-4 h-4 mr-1" />
-                Record Trade
+                <Plus className="w-4 h-4 sm:mr-1" />
+                <span className="hidden sm:inline">Record Trade</span>
               </Button>
             </div>
           </div>
@@ -521,7 +543,14 @@ export default function PortfolioPage() {
             </div>
           </div>
           <div className="p-6">
-            {getFilteredChartData().length > 0 ? (
+            {!chartLoaded ? (
+              // Loading skeleton for chart
+              <div className="h-[300px] animate-pulse">
+                <div className="h-full bg-gray-800 rounded-lg flex items-center justify-center">
+                  <div className="text-gray-600">Loading chart...</div>
+                </div>
+              </div>
+            ) : getFilteredChartData().length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <AreaChart data={getFilteredChartData()}>
                   <defs>
@@ -601,7 +630,7 @@ export default function PortfolioPage() {
           </div>
           <div className="p-6">
             {linkedAccounts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {linkedAccounts.map((account) => (
                   <div
                     key={account.id}

@@ -195,11 +195,15 @@ export default function OpportunitiesListPage() {
         <div className="bg-gray-900 rounded-xl border border-gray-800 p-4 mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
-              <label className="block text-sm text-gray-400 mb-2">
-                <Filter className="w-4 h-4 inline mr-1" />
+              <label
+                htmlFor="category-filter"
+                className="block text-sm text-gray-400 mb-2"
+              >
+                <Filter className="w-4 h-4 inline mr-1" aria-hidden="true" />
                 Category
               </label>
               <select
+                id="category-filter"
                 value={category}
                 onChange={(e) =>
                   handleFilterChange(e.target.value as FilterCategory, status)
@@ -214,11 +218,15 @@ export default function OpportunitiesListPage() {
               </select>
             </div>
             <div className="flex-1">
-              <label className="block text-sm text-gray-400 mb-2">
-                <Filter className="w-4 h-4 inline mr-1" />
+              <label
+                htmlFor="status-filter"
+                className="block text-sm text-gray-400 mb-2"
+              >
+                <Filter className="w-4 h-4 inline mr-1" aria-hidden="true" />
                 Status
               </label>
               <select
+                id="status-filter"
                 value={status}
                 onChange={(e) =>
                   handleFilterChange(category, e.target.value as FilterStatus)
@@ -263,8 +271,16 @@ export default function OpportunitiesListPage() {
               {opportunities.map((opp) => (
                 <div
                   key={opp.id}
+                  role="button"
+                  tabIndex={0}
                   className="p-4 hover:bg-gray-800/50 transition-colors cursor-pointer"
                   onClick={() => router.push(`/opportunities/${opp.id}`)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      router.push(`/opportunities/${opp.id}`);
+                    }
+                  }}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
