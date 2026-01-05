@@ -25,3 +25,30 @@ export {
   type WeeklyStats,
   type WeeklyStatsCategory,
 } from "./weekly-report";
+
+// Onboarding Email Templates
+export {
+  WelcomeEmail,
+  welcomeEmailHtml,
+  type WelcomeEmailProps,
+} from "./welcome-email";
+
+export {
+  GettingStartedEmail,
+  gettingStartedHtml,
+  type GettingStartedEmailProps,
+} from "./getting-started";
+
+export {
+  FeatureHighlightEmail,
+  featureHighlightHtml,
+  type FeatureHighlightEmailProps,
+  type SampleOpportunity,
+} from "./feature-highlight";
+
+export {
+  TrialEndingEmail,
+  trialEndingHtml,
+  type TrialEndingEmailProps,
+  type TrialStats,
+} from "./trial-ending";

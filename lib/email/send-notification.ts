@@ -11,12 +11,22 @@ import {
   opportunityAlertHtml,
   dailyDigestHtml,
   weeklyReportHtml,
+  welcomeEmailHtml,
+  gettingStartedHtml,
+  featureHighlightHtml,
+  trialEndingHtml,
   type OpportunityAlertProps,
   type DailyDigestProps,
   type DailyDigestOpportunity,
   type DailyDigestMetrics,
   type WeeklyReportProps,
   type WeeklyStats,
+  type WelcomeEmailProps,
+  type GettingStartedEmailProps,
+  type FeatureHighlightEmailProps,
+  type TrialEndingEmailProps,
+  type TrialStats,
+  type SampleOpportunity,
 } from "./templates/index";
 
 // Types
@@ -713,4 +723,369 @@ export async function calculateWeeklyStats(
     byCategory,
     dailyPnL,
   };
+}
+
+// ============================================================================
+// ONBOARDING EMAIL FUNCTIONS
+// ============================================================================
+
+/**
+ * Send welcome email to new user (Day 0)
+ */
+export async function sendWelcomeEmail(
+  userId: string,
+  trialDays: number = 7,
+): Promise<SendResult> {
+  try {
+    // Get user details
+    const user = await getUserById(userId);
+    if (!user || !user.email) {
+      return { success: false, error: "User not found or no email", userId };
+    }
+
+    // Prepare email data
+    const emailData: WelcomeEmailProps = {
+      userName: user.full_name || user.email.split("@")[0],
+      dashboardUrl: BASE_URL,
+      trialDays,
+    };
+
+    // Send email
+    const resend = getResendClient();
+    const response = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: user.email,
+      subject: `Welcome to ${BRAND_NAME} - Your trading edge starts here!`,
+      html: welcomeEmailHtml(emailData),
+    });
+
+    if (response.error) {
+      console.error("[Email] Failed to send welcome email:", response.error);
+      return { success: false, error: response.error.message, userId };
+    }
+
+    console.log(
+      `[Email] Sent welcome email to ${user.email}, ID: ${response.data?.id}`,
+    );
+
+    // Log notification
+    await logNotification(userId, "onboarding_welcome", null);
+
+    return { success: true, messageId: response.data?.id, userId };
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    console.error("[Email] Error sending welcome email:", errorMessage);
+    return { success: false, error: errorMessage, userId };
+  }
+}
+
+/**
+ * Send getting started email (Day 1)
+ */
+export async function sendGettingStartedEmail(
+  userId: string,
+): Promise<SendResult> {
+  try {
+    // Get user details
+    const user = await getUserById(userId);
+    if (!user || !user.email) {
+      return { success: false, error: "User not found or no email", userId };
+    }
+
+    // Prepare email data
+    const emailData: GettingStartedEmailProps = {
+      userName: user.full_name || user.email.split("@")[0],
+      dashboardUrl: BASE_URL,
+    };
+
+    // Send email
+    const resend = getResendClient();
+    const response = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: user.email,
+      subject: `Tips to maximize your ${BRAND_NAME} trial`,
+      html: gettingStartedHtml(emailData),
+    });
+
+    if (response.error) {
+      console.error(
+        "[Email] Failed to send getting started email:",
+        response.error,
+      );
+      return { success: false, error: response.error.message, userId };
+    }
+
+    console.log(
+      `[Email] Sent getting started email to ${user.email}, ID: ${response.data?.id}`,
+    );
+
+    // Log notification
+    await logNotification(userId, "onboarding_getting_started", null);
+
+    return { success: true, messageId: response.data?.id, userId };
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    console.error("[Email] Error sending getting started email:", errorMessage);
+    return { success: false, error: errorMessage, userId };
+  }
+}
+
+/**
+ * Send feature highlight email (Day 3)
+ */
+export async function sendFeatureHighlightEmail(
+  userId: string,
+  sampleOpportunity?: SampleOpportunity,
+): Promise<SendResult> {
+  try {
+    // Get user details
+    const user = await getUserById(userId);
+    if (!user || !user.email) {
+      return { success: false, error: "User not found or no email", userId };
+    }
+
+    // Prepare email data
+    const emailData: FeatureHighlightEmailProps = {
+      userName: user.full_name || user.email.split("@")[0],
+      dashboardUrl: BASE_URL,
+      sampleOpportunity,
+    };
+
+    // Send email
+    const resend = getResendClient();
+    const response = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: user.email,
+      subject: `The secret behind ${BRAND_NAME}'s AI scoring`,
+      html: featureHighlightHtml(emailData),
+    });
+
+    if (response.error) {
+      console.error(
+        "[Email] Failed to send feature highlight email:",
+        response.error,
+      );
+      return { success: false, error: response.error.message, userId };
+    }
+
+    console.log(
+      `[Email] Sent feature highlight email to ${user.email}, ID: ${response.data?.id}`,
+    );
+
+    // Log notification
+    await logNotification(userId, "onboarding_feature_highlight", null);
+
+    return { success: true, messageId: response.data?.id, userId };
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    console.error(
+      "[Email] Error sending feature highlight email:",
+      errorMessage,
+    );
+    return { success: false, error: errorMessage, userId };
+  }
+}
+
+/**
+ * Send trial ending email (Day 5 or 7)
+ */
+export async function sendTrialEndingEmail(
+  userId: string,
+  trialStats?: TrialStats,
+  discountCode?: string,
+  discountPercent?: number,
+): Promise<SendResult> {
+  try {
+    // Get user details
+    const user = await getUserById(userId);
+    if (!user || !user.email) {
+      return { success: false, error: "User not found or no email", userId };
+    }
+
+    // If no stats provided, try to calculate them
+    let stats = trialStats;
+    if (!stats) {
+      stats = await calculateTrialStats(userId);
+    }
+
+    // Prepare email data
+    const emailData: TrialEndingEmailProps = {
+      userName: user.full_name || user.email.split("@")[0],
+      dashboardUrl: BASE_URL,
+      trialStats: stats,
+      discountCode,
+      discountPercent,
+    };
+
+    // Send email
+    const resend = getResendClient();
+    const daysRemaining = stats?.daysRemaining || 2;
+    const response = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: user.email,
+      subject: `Your ${BRAND_NAME} trial ends in ${daysRemaining} day${daysRemaining === 1 ? "" : "s"}`,
+      html: trialEndingHtml(emailData),
+    });
+
+    if (response.error) {
+      console.error(
+        "[Email] Failed to send trial ending email:",
+        response.error,
+      );
+      return { success: false, error: response.error.message, userId };
+    }
+
+    console.log(
+      `[Email] Sent trial ending email to ${user.email}, ID: ${response.data?.id}`,
+    );
+
+    // Log notification
+    await logNotification(userId, "onboarding_trial_ending", null);
+
+    return { success: true, messageId: response.data?.id, userId };
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    console.error("[Email] Error sending trial ending email:", errorMessage);
+    return { success: false, error: errorMessage, userId };
+  }
+}
+
+/**
+ * Calculate trial stats for a user
+ */
+async function calculateTrialStats(userId: string): Promise<TrialStats> {
+  const supabase = getSupabaseClient();
+
+  // Get user's trial start date from users table
+  const { data: userData } = await supabase
+    .from("users")
+    .select("created_at")
+    .eq("id", userId)
+    .single();
+
+  const trialStartDate = userData?.created_at
+    ? new Date(userData.created_at)
+    : new Date();
+  const daysSinceStart = Math.floor(
+    (Date.now() - trialStartDate.getTime()) / (1000 * 60 * 60 * 24),
+  );
+  const trialDays = 7; // Default trial length
+  const daysRemaining = Math.max(0, trialDays - daysSinceStart);
+
+  // Get opportunities viewed (activity logs or just count all)
+  const { count: opportunitiesCount } = await supabase
+    .from("opportunities")
+    .select("*", { count: "exact", head: true })
+    .or(`user_id.eq.${userId},user_id.is.null`)
+    .gte("created_at", trialStartDate.toISOString());
+
+  // Get notification logs count
+  const { count: alertsCount } = await supabase
+    .from("notification_logs")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .gte("sent_at", trialStartDate.toISOString());
+
+  // Determine top category
+  const { data: categoryData } = await supabase
+    .from("opportunities")
+    .select("category")
+    .or(`user_id.eq.${userId},user_id.is.null`)
+    .gte("created_at", trialStartDate.toISOString());
+
+  let topCategory: string | undefined;
+  if (categoryData && categoryData.length > 0) {
+    const categoryCounts: Record<string, number> = {};
+    categoryData.forEach((item) => {
+      categoryCounts[item.category] = (categoryCounts[item.category] || 0) + 1;
+    });
+    const sortedCategories = Object.entries(categoryCounts).sort(
+      ([, a], [, b]) => b - a,
+    );
+    if (sortedCategories.length > 0) {
+      const categoryName = sortedCategories[0][0];
+      topCategory =
+        categoryName.charAt(0).toUpperCase() + categoryName.slice(1);
+    }
+  }
+
+  return {
+    opportunitiesViewed: opportunitiesCount || 0,
+    alertsReceived: alertsCount || 0,
+    topCategory,
+    daysRemaining,
+  };
+}
+
+/**
+ * Get users who should receive onboarding emails based on signup date
+ */
+export async function getUsersForOnboardingEmail(
+  daysSinceSignup: number,
+): Promise<string[]> {
+  const supabase = getSupabaseClient();
+
+  // Calculate the date range for users who signed up X days ago
+  const targetDate = new Date();
+  targetDate.setDate(targetDate.getDate() - daysSinceSignup);
+  const startOfDay = new Date(targetDate);
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date(targetDate);
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const { data, error } = await supabase
+    .from("users")
+    .select("id")
+    .gte("created_at", startOfDay.toISOString())
+    .lte("created_at", endOfDay.toISOString());
+
+  if (error) {
+    console.error("Failed to get users for onboarding email:", error);
+    return [];
+  }
+
+  return data?.map((row) => row.id) || [];
+}
+
+/**
+ * Send all pending onboarding emails
+ * Call this from a daily cron job
+ */
+export async function sendPendingOnboardingEmails(): Promise<{
+  day1Sent: number;
+  day3Sent: number;
+  day5Sent: number;
+}> {
+  const results = { day1Sent: 0, day3Sent: 0, day5Sent: 0 };
+
+  // Day 1: Getting Started
+  const day1Users = await getUsersForOnboardingEmail(1);
+  for (const userId of day1Users) {
+    const result = await sendGettingStartedEmail(userId);
+    if (result.success) results.day1Sent++;
+  }
+
+  // Day 3: Feature Highlight
+  const day3Users = await getUsersForOnboardingEmail(3);
+  for (const userId of day3Users) {
+    const result = await sendFeatureHighlightEmail(userId);
+    if (result.success) results.day3Sent++;
+  }
+
+  // Day 5: Trial Ending (for 7-day trial)
+  const day5Users = await getUsersForOnboardingEmail(5);
+  for (const userId of day5Users) {
+    const result = await sendTrialEndingEmail(userId);
+    if (result.success) results.day5Sent++;
+  }
+
+  console.log(
+    `[Onboarding] Sent emails - Day 1: ${results.day1Sent}, Day 3: ${results.day3Sent}, Day 5: ${results.day5Sent}`,
+  );
+
+  return results;
 }
