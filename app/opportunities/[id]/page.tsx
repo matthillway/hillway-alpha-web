@@ -87,6 +87,13 @@ export default function OpportunityDetailPage({
   const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [guidance, setGuidance] = useState<CategoryGuidance | null>(null);
+  const [tips, setTips] = useState<Tip[]>([]);
+  const [platforms, setPlatforms] = useState<string[]>([]);
+  const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
+  const [expandedSections, setExpandedSections] = useState<string[]>([
+    "execution",
+  ]);
 
   useEffect(() => {
     async function checkAuthAndFetch() {
@@ -108,6 +115,23 @@ export default function OpportunityDetailPage({
       if (res.ok) {
         const data = await res.json();
         setOpportunity(data);
+
+        // Load guidance for the category
+        const cat = data.category as OpportunityCategory;
+        if (
+          cat === "arbitrage" ||
+          cat === "value_bet" ||
+          cat === "stock" ||
+          cat === "crypto"
+        ) {
+          setGuidance(getExecutionGuidance(cat));
+          setTips(getQuickTips(cat, 3));
+          const availablePlatforms = getAvailablePlatforms(cat);
+          setPlatforms(availablePlatforms);
+          if (availablePlatforms.length > 0) {
+            setSelectedPlatform(availablePlatforms[0]);
+          }
+        }
       } else if (res.status === 404) {
         showError("Opportunity not found");
         router.push("/dashboard");
@@ -119,6 +143,40 @@ export default function OpportunityDetailPage({
       showError("Network error. Please check your connection.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleSection = (section: string) => {
+    setExpandedSections((prev) =>
+      prev.includes(section)
+        ? prev.filter((s) => s !== section)
+        : [...prev, section],
+    );
+  };
+
+  const getRiskLevelColor = (level: string) => {
+    switch (level) {
+      case "info":
+        return "text-blue-400 bg-blue-500/10 border-blue-500/30";
+      case "warning":
+        return "text-yellow-400 bg-yellow-500/10 border-yellow-500/30";
+      case "danger":
+        return "text-red-400 bg-red-500/10 border-red-500/30";
+      default:
+        return "text-gray-400 bg-gray-500/10 border-gray-500/30";
+    }
+  };
+
+  const getRiskLevelIcon = (level: string) => {
+    switch (level) {
+      case "info":
+        return <Info className="w-4 h-4" />;
+      case "warning":
+        return <AlertTriangle className="w-4 h-4" />;
+      case "danger":
+        return <XCircle className="w-4 h-4" />;
+      default:
+        return <Info className="w-4 h-4" />;
     }
   };
 
@@ -584,6 +642,295 @@ export default function OpportunityDetailPage({
                   {aiAnalysis.confidenceExplanation}
                 </p>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* How to Execute Section */}
+        {guidance && (
+          <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden mb-6">
+            <button
+              onClick={() => toggleSection("execution")}
+              className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-800/50 transition-colors"
+            >
+              <div className="flex items-center space-x-3">
+                <Zap className="w-5 h-5 text-yellow-500" />
+                <h2 className="text-lg font-semibold text-white">
+                  How to Execute This Opportunity
+                </h2>
+              </div>
+              {expandedSections.includes("execution") ? (
+                <ChevronDown className="w-5 h-5 text-gray-400" />
+              ) : (
+                <ChevronRight className="w-5 h-5 text-gray-400" />
+              )}
+            </button>
+
+            {expandedSections.includes("execution") && (
+              <div className="px-6 pb-6 border-t border-gray-800">
+                <p className="text-gray-400 my-4">{guidance.overview}</p>
+
+                {/* Step by Step */}
+                <div className="space-y-4">
+                  {guidance.executionSteps.map((step) => (
+                    <div
+                      key={step.step}
+                      className="bg-gray-800/50 rounded-lg p-4 border border-gray-700"
+                    >
+                      <div className="flex items-start space-x-4">
+                        <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-blue-400 font-bold">
+                            {step.step}
+                          </span>
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="text-white font-medium">
+                            {step.title}
+                          </h4>
+                          <p className="text-gray-400 text-sm mt-1">
+                            {step.description}
+                          </p>
+                          {step.warning && (
+                            <div className="flex items-start space-x-2 mt-2 text-yellow-400 text-sm">
+                              <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                              <span>{step.warning}</span>
+                            </div>
+                          )}
+                          {step.tip && (
+                            <div className="flex items-start space-x-2 mt-2 text-blue-400 text-sm">
+                              <Lightbulb className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                              <span>{step.tip}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Platform Instructions */}
+        {platforms.length > 0 && (
+          <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden mb-6">
+            <button
+              onClick={() => toggleSection("platform")}
+              className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-800/50 transition-colors"
+            >
+              <div className="flex items-center space-x-3">
+                <ExternalLink className="w-5 h-5 text-purple-500" />
+                <h2 className="text-lg font-semibold text-white">
+                  Platform-Specific Instructions
+                </h2>
+              </div>
+              {expandedSections.includes("platform") ? (
+                <ChevronDown className="w-5 h-5 text-gray-400" />
+              ) : (
+                <ChevronRight className="w-5 h-5 text-gray-400" />
+              )}
+            </button>
+
+            {expandedSections.includes("platform") && (
+              <div className="px-6 pb-6 border-t border-gray-800">
+                {/* Platform selector */}
+                <div className="flex flex-wrap gap-2 my-4">
+                  {platforms.map((platform) => (
+                    <button
+                      key={platform}
+                      onClick={() => setSelectedPlatform(platform)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        selectedPlatform === platform
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-800 text-gray-400 hover:text-white"
+                      }`}
+                    >
+                      {platform}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Instructions for selected platform */}
+                {selectedPlatform && (
+                  <div className="space-y-2">
+                    {getPlatformInstructions(
+                      opportunity.category as OpportunityCategory,
+                      selectedPlatform,
+                    ).map((instruction, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-start space-x-3 text-gray-300"
+                      >
+                        <span className="text-gray-500 font-mono text-sm">
+                          {idx + 1}.
+                        </span>
+                        <span>{instruction}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Risk Warnings from Tips */}
+        {guidance && guidance.riskWarnings.length > 0 && (
+          <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden mb-6">
+            <button
+              onClick={() => toggleSection("tips-risk")}
+              className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-800/50 transition-colors"
+            >
+              <div className="flex items-center space-x-3">
+                <Shield className="w-5 h-5 text-red-500" />
+                <h2 className="text-lg font-semibold text-white">
+                  Risk Warnings
+                </h2>
+              </div>
+              {expandedSections.includes("tips-risk") ? (
+                <ChevronDown className="w-5 h-5 text-gray-400" />
+              ) : (
+                <ChevronRight className="w-5 h-5 text-gray-400" />
+              )}
+            </button>
+
+            {expandedSections.includes("tips-risk") && (
+              <div className="px-6 pb-6 border-t border-gray-800">
+                <div className="space-y-3 mt-4">
+                  {guidance.riskWarnings.map((warning, idx) => (
+                    <div
+                      key={idx}
+                      className={`rounded-lg p-4 border ${getRiskLevelColor(warning.level)}`}
+                    >
+                      <div className="flex items-start space-x-3">
+                        {getRiskLevelIcon(warning.level)}
+                        <div>
+                          <h4 className="font-medium">{warning.title}</h4>
+                          <p className="text-sm mt-1 opacity-80">
+                            {warning.message}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Money Management & Quick Tips */}
+        {guidance && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* Money Management */}
+            <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">
+              <div className="flex items-center space-x-2 mb-4">
+                <DollarSign className="w-5 h-5 text-green-500" />
+                <h3 className="text-lg font-semibold text-white">
+                  Money Management
+                </h3>
+              </div>
+              <ul className="space-y-2">
+                {guidance.moneyManagement.slice(0, 4).map((tip, idx) => (
+                  <li
+                    key={idx}
+                    className="flex items-start space-x-2 text-gray-400 text-sm"
+                  >
+                    <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span>{tip}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Quick Tips */}
+            {tips.length > 0 && (
+              <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <Lightbulb className="w-5 h-5 text-yellow-500" />
+                  <h3 className="text-lg font-semibold text-white">
+                    Quick Tips
+                  </h3>
+                </div>
+                <div className="space-y-3">
+                  {tips.map((tip) => (
+                    <div
+                      key={tip.id}
+                      className="bg-gray-800/50 rounded-lg p-3 border border-gray-700"
+                    >
+                      <h4 className="text-white font-medium text-sm">
+                        {tip.title}
+                      </h4>
+                      <p className="text-gray-400 text-xs mt-1">
+                        {tip.content}
+                      </p>
+                      <span
+                        className={`inline-block mt-2 px-2 py-0.5 rounded text-xs ${
+                          tip.level === "beginner"
+                            ? "bg-green-500/20 text-green-400"
+                            : tip.level === "intermediate"
+                              ? "bg-yellow-500/20 text-yellow-400"
+                              : "bg-red-500/20 text-red-400"
+                        }`}
+                      >
+                        {tip.level}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Pro Tips & Common Mistakes */}
+        {guidance && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* Pro Tips */}
+            <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">
+              <div className="flex items-center space-x-2 mb-4">
+                <Zap className="w-5 h-5 text-purple-500" />
+                <h3 className="text-lg font-semibold text-white">Pro Tips</h3>
+              </div>
+              <ul className="space-y-2">
+                {guidance.proTips.slice(0, 4).map((tip, idx) => (
+                  <li
+                    key={idx}
+                    className="flex items-start space-x-2 text-gray-400 text-sm"
+                  >
+                    <span className="text-purple-400">*</span>
+                    <span>{tip}</span>
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={() => router.push("/guides")}
+                className="mt-4 text-blue-500 hover:text-blue-400 text-sm flex items-center"
+              >
+                View full guide <ChevronRight className="w-4 h-4 ml-1" />
+              </button>
+            </div>
+
+            {/* Common Mistakes */}
+            <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">
+              <div className="flex items-center space-x-2 mb-4">
+                <AlertTriangle className="w-5 h-5 text-yellow-500" />
+                <h3 className="text-lg font-semibold text-white">
+                  Avoid These Mistakes
+                </h3>
+              </div>
+              <ul className="space-y-2">
+                {guidance.commonMistakes.slice(0, 4).map((mistake, idx) => (
+                  <li
+                    key={idx}
+                    className="flex items-start space-x-2 text-gray-400 text-sm"
+                  >
+                    <XCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                    <span>{mistake}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         )}

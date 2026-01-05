@@ -16,13 +16,19 @@ import {
   Bitcoin,
   RefreshCw,
   ChevronRight,
+  ChevronDown,
   Clock,
   ArrowUpRight,
   ArrowDownRight,
   Shield,
   BookOpen,
   PieChart,
+  Target,
+  Gift,
+  Lightbulb,
+  Zap,
 } from "lucide-react";
+import { getTipOfTheDay, getQuickTips, type Tip } from "@/lib/tips";
 
 interface Metrics {
   today: {
@@ -71,6 +77,9 @@ export default function DashboardPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [userTier, setUserTier] = useState<string>("free");
+  const [bettingExpanded, setBettingExpanded] = useState(false);
+  const [dailyTip, setDailyTip] = useState<Tip | null>(null);
+  const [quickTips, setQuickTips] = useState<Tip[]>([]);
 
   const fetchData = useCallback(async () => {
     setRefreshing(true);
@@ -107,30 +116,34 @@ export default function DashboardPage() {
       }
       setUser(session.user);
 
-      // Check if user is admin
-      const { data: adminData } = await supabase
-        .from("admin_users")
-        .select("role")
-        .eq("user_id", session.user.id)
-        .single();
-
-      if (adminData?.role === "super_admin" || adminData?.role === "admin") {
-        setIsAdmin(true);
-      }
-
-      // Fetch user subscription tier
-      const { data: userData } = await supabase
-        .from("users")
-        .select("subscription_tier")
+      // Fetch user profile (includes role and subscription tier)
+      const { data: userProfile } = await supabase
+        .from("user_profiles")
+        .select("role, subscription_tier")
         .eq("id", session.user.id)
         .single();
 
-      if (userData?.subscription_tier) {
-        setUserTier(userData.subscription_tier);
+      if (userProfile) {
+        // Check if user is admin
+        if (
+          userProfile.role === "super_admin" ||
+          userProfile.role === "admin"
+        ) {
+          setIsAdmin(true);
+        }
+
+        // Set subscription tier
+        if (userProfile.subscription_tier) {
+          setUserTier(userProfile.subscription_tier);
+        }
       }
 
       setLoading(false);
       fetchData();
+
+      // Load tips
+      setDailyTip(getTipOfTheDay());
+      setQuickTips(getQuickTips(undefined, 4));
     }
     init();
   }, [router, fetchData]);
@@ -403,33 +416,229 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Scanner Cards */}
+        {/* Tip of the Day & Quick Tips */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-blue-500" />
-              </div>
-              <div>
-                <h3 className="text-white font-semibold">Betting Arbitrage</h3>
-                <p className="text-gray-400 text-sm">
-                  {metrics?.today.byCategory?.arbitrage ?? 0} opportunities
-                </p>
+          {/* Tip of the Day */}
+          {dailyTip && (
+            <div className="lg:col-span-2 bg-gradient-to-br from-blue-900/50 to-purple-900/50 rounded-xl p-6 border border-blue-500/30">
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Lightbulb className="w-6 h-6 text-yellow-500" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <h3 className="text-lg font-semibold text-white">
+                      Tip of the Day
+                    </h3>
+                    <span
+                      className={`px-2 py-0.5 rounded text-xs font-medium ${
+                        dailyTip.category === "arbitrage"
+                          ? "bg-blue-500/20 text-blue-400"
+                          : dailyTip.category === "value_bet"
+                            ? "bg-purple-500/20 text-purple-400"
+                            : dailyTip.category === "stock"
+                              ? "bg-green-500/20 text-green-400"
+                              : dailyTip.category === "crypto"
+                                ? "bg-orange-500/20 text-orange-400"
+                                : "bg-gray-500/20 text-gray-400"
+                      }`}
+                    >
+                      {dailyTip.category === "value_bet"
+                        ? "Value Bet"
+                        : dailyTip.category.charAt(0).toUpperCase() +
+                          dailyTip.category.slice(1)}
+                    </span>
+                    <span
+                      className={`px-2 py-0.5 rounded text-xs font-medium ${
+                        dailyTip.level === "beginner"
+                          ? "bg-green-500/20 text-green-400"
+                          : dailyTip.level === "intermediate"
+                            ? "bg-yellow-500/20 text-yellow-400"
+                            : "bg-red-500/20 text-red-400"
+                      }`}
+                    >
+                      {dailyTip.level.charAt(0).toUpperCase() +
+                        dailyTip.level.slice(1)}
+                    </span>
+                  </div>
+                  <h4 className="text-white font-medium mb-2">
+                    {dailyTip.title}
+                  </h4>
+                  <p className="text-gray-300 text-sm leading-relaxed">
+                    {dailyTip.content}
+                  </p>
+                </div>
               </div>
             </div>
-            <p className="text-gray-400 text-sm mb-4">
-              Find guaranteed profit from odds discrepancies across bookmakers.
-            </p>
-            <Button
-              variant="primary"
-              className="w-full"
-              onClick={() => handleScan("arbitrage")}
-              disabled={scanning}
-            >
-              {scanning ? "Scanning..." : "Scan Now"}
-            </Button>
+          )}
+
+          {/* Quick Tips Sidebar */}
+          <div className="bg-gray-900 rounded-xl border border-gray-800">
+            <div className="px-4 py-3 border-b border-gray-800 flex items-center space-x-2">
+              <Zap className="w-4 h-4 text-yellow-500" />
+              <h3 className="text-white font-semibold text-sm">Quick Tips</h3>
+            </div>
+            <div className="p-4 space-y-3">
+              {quickTips.map((tip, index) => (
+                <div key={index} className="flex items-start space-x-3 group">
+                  <div
+                    className={`w-6 h-6 rounded flex items-center justify-center flex-shrink-0 ${
+                      tip.category === "arbitrage"
+                        ? "bg-blue-500/20"
+                        : tip.category === "value_bet"
+                          ? "bg-purple-500/20"
+                          : tip.category === "stock"
+                            ? "bg-green-500/20"
+                            : tip.category === "crypto"
+                              ? "bg-orange-500/20"
+                              : "bg-gray-500/20"
+                    }`}
+                  >
+                    {getCategoryIcon(tip.category)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-gray-300 text-xs leading-relaxed line-clamp-2">
+                      {tip.content}
+                    </p>
+                  </div>
+                </div>
+              ))}
+              <button
+                onClick={() => router.push("/guides")}
+                className="w-full text-center text-blue-500 hover:text-blue-400 text-xs mt-2 flex items-center justify-center"
+              >
+                View all guides <ChevronRight className="w-3 h-3 ml-1" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Scanner Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Betting Scanner Card with Expandable Sub-options */}
+          <div className="bg-gray-900 rounded-xl border border-gray-800">
+            <div className="p-6">
+              <div
+                className="flex items-center justify-between cursor-pointer"
+                onClick={() => setBettingExpanded(!bettingExpanded)}
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-blue-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-semibold">
+                      Betting Scanners
+                    </h3>
+                    <p className="text-gray-400 text-sm">
+                      {(metrics?.today.byCategory?.arbitrage ?? 0) +
+                        (metrics?.today.byCategory?.value_bet ?? 0)}{" "}
+                      opportunities
+                    </p>
+                  </div>
+                </div>
+                <ChevronDown
+                  className={`w-5 h-5 text-gray-400 transition-transform ${
+                    bettingExpanded ? "rotate-180" : ""
+                  }`}
+                />
+              </div>
+              <p className="text-gray-400 text-sm mt-4 mb-4">
+                Sports betting opportunities including arbitrage, value bets,
+                and matched betting promotions.
+              </p>
+              <Button
+                variant="primary"
+                className="w-full"
+                onClick={() => handleScan("betting")}
+                loading={scanning}
+              >
+                Scan All Betting
+              </Button>
+            </div>
+
+            {/* Expandable Sub-options */}
+            {bettingExpanded && (
+              <div className="border-t border-gray-800 p-4 space-y-3">
+                {/* Arbitrage */}
+                <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                      <TrendingUp className="w-4 h-4 text-blue-500" />
+                    </div>
+                    <div>
+                      <p className="text-white text-sm font-medium">
+                        Arbitrage
+                      </p>
+                      <p className="text-gray-500 text-xs">
+                        Guaranteed profit from odds gaps
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleScan("arbitrage")}
+                    disabled={scanning}
+                  >
+                    Scan
+                  </Button>
+                </div>
+
+                {/* Value Bets */}
+                <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                      <Target className="w-4 h-4 text-purple-500" />
+                    </div>
+                    <div>
+                      <p className="text-white text-sm font-medium">
+                        Value Bets
+                      </p>
+                      <p className="text-gray-500 text-xs">
+                        Odds higher than true probability
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleScan("value_bets")}
+                    disabled={scanning}
+                  >
+                    Scan
+                  </Button>
+                </div>
+
+                {/* Matched Betting */}
+                <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
+                      <Gift className="w-4 h-4 text-green-500" />
+                    </div>
+                    <div>
+                      <p className="text-white text-sm font-medium">
+                        Matched Betting
+                      </p>
+                      <p className="text-gray-500 text-xs">
+                        Free bets & bonus promotions
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleScan("matched_betting")}
+                    disabled={scanning}
+                  >
+                    Scan
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
 
+          {/* Stock Momentum Card */}
           <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
@@ -449,12 +658,13 @@ export default function DashboardPage() {
               variant="primary"
               className="w-full"
               onClick={() => handleScan("stocks")}
-              disabled={scanning}
+              loading={scanning}
             >
-              {scanning ? "Scanning..." : "Scan Now"}
+              Scan Now
             </Button>
           </div>
 
+          {/* Crypto Funding Card */}
           <div className="bg-gray-900 rounded-xl p-6 border border-gray-800">
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
@@ -474,9 +684,9 @@ export default function DashboardPage() {
               variant="primary"
               className="w-full"
               onClick={() => handleScan("crypto")}
-              disabled={scanning}
+              loading={scanning}
             >
-              {scanning ? "Scanning..." : "Scan Now"}
+              Scan Now
             </Button>
           </div>
         </div>
@@ -506,9 +716,9 @@ export default function DashboardPage() {
                   variant="primary"
                   className="mt-4"
                   onClick={() => handleScan("all")}
-                  disabled={scanning}
+                  loading={scanning}
                 >
-                  {scanning ? "Scanning..." : "Run Full Scan"}
+                  Run Full Scan
                 </Button>
               </div>
             ) : (
